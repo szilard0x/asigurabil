@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
 import CardCanvas from '../features/cards/CardCanvas'
 import {
@@ -24,6 +24,19 @@ export default function CardsPage() {
   const [content, setContent] = useState<CardContent>({ ...PRESETS[0] })
   const [exporting, setExporting] = useState(false)
   const exportRef = useRef<HTMLDivElement>(null)
+  const previewColRef = useRef<HTMLDivElement>(null)
+  const [availWidth, setAvailWidth] = useState(520)
+
+  // lățimea reală disponibilă pentru previzualizare (responsive pe telefon)
+  useEffect(() => {
+    const el = previewColRef.current
+    if (!el) return
+    const measure = () => setAvailWidth(el.clientWidth)
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   const applyPreset = (id: string) => {
     const p = PRESETS.find((x) => x.id === id)
@@ -34,8 +47,11 @@ export default function CardsPage() {
   }
 
   const { width, height } = FORMATS[format]
-  // scara de previzualizare: încape în ~520px lățime / ~640px înălțime
-  const previewScale = useMemo(() => Math.min(520 / width, 640 / height), [width, height])
+  // scara de previzualizare: încape în lățimea disponibilă și max ~640px înălțime
+  const previewScale = useMemo(
+    () => Math.min(Math.min(availWidth, 520) / width, 640 / height),
+    [availWidth, width, height],
+  )
 
   const download = async () => {
     if (!exportRef.current || exporting) return
@@ -162,7 +178,7 @@ export default function CardsPage() {
         </div>
 
         {/* previzualizare scalată */}
-        <div className="flex flex-col items-center gap-3">
+        <div ref={previewColRef} className="flex flex-col items-center gap-3 min-w-0">
           <div
             className="rounded-2xl overflow-hidden shadow-[0_24px_55px_rgba(15,42,67,.35)]"
             style={{ width: width * previewScale, height: height * previewScale }}

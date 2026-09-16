@@ -135,7 +135,7 @@ export const INSURANCE_TYPES: InsuranceType[] = [
     id: 'malpraxis',
     label: 'Malpraxis',
     short: 'pentru profesioniști',
-    icon: '⚕️',
+    icon: '🩺',
     reasonQuestion: 'Pentru ce profesie ai nevoie de malpraxis?',
     reasons: [
       { id: 'medic', label: 'Medic / asistent medical' },

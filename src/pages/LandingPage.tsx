@@ -1,6 +1,5 @@
 import Navbar from '../components/sections/Navbar'
 import Hero from '../components/sections/Hero'
-import Services from '../components/sections/Services'
 import HowItWorks from '../components/sections/HowItWorks'
 import QuoteWizard from '../features/quote-form/QuoteWizard'
 import WhyMe from '../components/sections/WhyMe'
@@ -15,7 +14,6 @@ export default function LandingPage() {
       <Navbar />
       <main>
         <Hero />
-        <Services />
         <HowItWorks />
         <QuoteWizard />
         <WhyMe />

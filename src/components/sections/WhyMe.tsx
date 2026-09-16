@@ -1,27 +1,28 @@
 import Reveal from '../ui/Reveal'
 import SectionHeading from '../ui/SectionHeading'
+import { LogoMark } from '../Logo'
 import { BRAND } from '../../lib/constants'
 
 const bullets = [
   {
     icon: '🎯',
     title: 'Oferte comparate, nu „ce se vinde azi"',
-    text: 'Lucrez cu mai mulți asigurători, deci recomandarea mea e în interesul tău, nu al unei singure companii.',
+    text: 'Lucrăm cu mai mulți asigurători, deci recomandarea noastră e în interesul tău, nu al unei singure companii.',
   },
   {
     icon: '⚡',
     title: 'Răspuns în ~30 de minute',
-    text: `În timpul programului (${BRAND.schedule}) răspund rapid. Urgențele nu așteaptă — nici eu.`,
+    text: `În timpul programului (${BRAND.schedule}) răspundem rapid. Urgențele nu așteaptă — nici noi.`,
   },
   {
     icon: '🤝',
-    title: 'Un singur om, pe termen lung',
-    text: 'Îți știu istoricul și nevoile. La reînnoire sau la daună vorbești cu mine, nu reiei totul de la zero.',
+    title: 'Aceiași oameni, pe termen lung',
+    text: 'Îți știm istoricul și nevoile. La reînnoire sau la daună vorbești cu noi, nu reiei totul de la zero.',
   },
   {
     icon: '🔔',
-    title: 'Îți amintesc eu de scadențe',
-    text: 'Îmi notez când îți expiră polițele și te anunț din timp — nu mai rămâi niciodată descoperit.',
+    title: 'Îți amintim noi de scadențe',
+    text: 'Ne notăm când îți expiră polițele și te anunțăm din timp — nu mai rămâi niciodată descoperit.',
   },
 ]
 
@@ -36,15 +37,15 @@ export default function WhyMe() {
               className="absolute -top-24 -right-20 w-[300px] h-[300px] rounded-full"
               style={{ background: 'radial-gradient(circle, rgba(245,158,11,.22), transparent 65%)' }}
             />
-            <div className="w-20 h-20 rounded-full bg-[linear-gradient(135deg,#F59E0B,#FBBF24)] flex items-center justify-center text-navy font-display font-extrabold text-3xl mb-5">
-              S
+            <div className="mb-5">
+              <LogoMark size={72} />
             </div>
-            <h3 className="font-bold text-2xl leading-snug">{BRAND.owner}</h3>
-            <p className="text-[#C7D3E0] text-sm mt-1 mb-6">{BRAND.role}</p>
+            <h3 className="font-bold text-2xl leading-snug">Echipa asigurabil.ro</h3>
+            <p className="text-[#C7D3E0] text-sm mt-1 mb-6">Consultanți în asigurări</p>
             <p className="text-[15px] leading-relaxed text-[#DCE6F0]">
-              „Rolul meu e simplu: tu îmi spui ce vrei să protejezi, eu îți aduc variantele bune și
-              ți le explic fără jargon. Decizia e mereu a ta — eu doar mă asigur că o iei în
-              cunoștință de cauză."
+              „Rolul nostru e simplu: tu ne spui ce vrei să protejezi, noi îți aducem variantele
+              bune și ți le explicăm fără jargon. Decizia e mereu a ta — noi doar ne asigurăm că o
+              iei în cunoștință de cauză."
             </p>
             <div className="mt-7 pt-6 border-t border-white/15 text-sm text-[#C7D3E0]">
               📞 {BRAND.phoneDisplay} · {BRAND.schedule}
@@ -53,12 +54,12 @@ export default function WhyMe() {
         </Reveal>
         <div>
           <SectionHeading
-            label="De ce cu mine"
-            title="Un broker de partea ta, nu a asigurătorului"
+            label="De ce cu noi"
+            title="O echipă de partea ta, nu a asigurătorului"
           />
           <div className="grid sm:grid-cols-2 gap-5 mt-8">
-            {bullets.map((b, i) => (
-              <Reveal key={b.title} delay={i * 0.08}>
+            {bullets.map((b) => (
+              <Reveal key={b.title} delay={bullets.indexOf(b) * 0.08}>
                 <div className="flex gap-3.5">
                   <div className="w-11 h-11 shrink-0 rounded-xl bg-amber-soft flex items-center justify-center text-lg" aria-hidden>
                     {b.icon}

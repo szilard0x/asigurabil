@@ -23,7 +23,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href={whatsAppUrl('Bună, Sergiu! Am o întrebare despre asigurări.')}
+                  href={whatsAppUrl('Bună ziua! Am o întrebare despre asigurări.')}
                   target="_blank"
                   rel="noopener"
                   className="hover:text-white transition-colors"

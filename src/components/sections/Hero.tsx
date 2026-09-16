@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { Button, ButtonLink } from '../ui/Button'
-import { BRAND, whatsAppUrl } from '../../lib/constants'
+import { Button } from '../ui/Button'
+import { INSURANCE_TYPES } from '../../features/quote-form/config'
+import { useQuoteForm } from '../../features/quote-form/QuoteFormContext'
 import { scrollToWizard } from '../../lib/scroll'
 
 const stats = [
@@ -9,14 +10,9 @@ const stats = [
   { value: '~30 min', label: 'timp de răspuns' },
 ]
 
-const chatMessages = [
-  { me: false, text: 'Bună! Am primit cererea ta pentru asigurarea de sănătate. Îți pregătesc 3 oferte de comparat. 👌' },
-  { me: true, text: 'Super, mulțumesc! Cât durează?' },
-  { me: false, text: 'Revin în maxim 30 de minute cu tot ce ai nevoie.' },
-]
-
 export default function Hero() {
   const reduced = useReducedMotion()
+  const { selectType } = useQuoteForm()
   const fadeUp = (delay: number) =>
     reduced
       ? {}
@@ -40,13 +36,13 @@ export default function Hero() {
         style={{ background: 'radial-gradient(circle, rgba(255,255,255,.05), transparent 60%)' }}
       />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-36 pb-24 grid lg:grid-cols-[1.15fr_.85fr] gap-12 items-center">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-36 pb-24 grid lg:grid-cols-[1.05fr_.95fr] gap-12 items-center">
         <div>
           <motion.div
             {...fadeUp(0)}
             className="inline-flex items-center gap-2 bg-amber/15 border border-amber/40 text-[#FBCB6F] text-[13px] font-semibold px-3.5 py-1.5 rounded-full mb-6"
           >
-            ✓ Consultanță gratuită · Răspuns rapid pe WhatsApp
+            ✓ Consultanță gratuită · Răspuns rapid pe WhatsApp sau telefon
           </motion.div>
           <motion.h1
             {...fadeUp(0.08)}
@@ -55,20 +51,12 @@ export default function Hero() {
             Totul este <span className="text-amber">asigurabil</span>.
           </motion.h1>
           <motion.p {...fadeUp(0.16)} className="mt-5 mb-8 text-[17px] leading-relaxed text-[#C7D3E0] max-w-lg">
-            Găsesc pentru tine cea mai potrivită asigurare — RCA, sănătate, viață, călătorii și nu
-            numai. Compar ofertele mai multor asigurători și tu alegi în cunoștință de cauză.
+            Găsim pentru tine cea mai potrivită asigurare — RCA, sănătate, viață, călătorii și nu
+            numai. Comparăm ofertele mai multor asigurători și tu alegi în cunoștință de cauză.
             Simplu, rapid, fără costuri ascunse.
           </motion.p>
           <motion.div {...fadeUp(0.24)} className="flex flex-wrap gap-3.5">
             <Button onClick={scrollToWizard}>Cere ofertă în 60 de secunde →</Button>
-            <ButtonLink
-              variant="ghost"
-              href={whatsAppUrl('Bună, Sergiu! Am o întrebare despre asigurări.')}
-              target="_blank"
-              rel="noopener"
-            >
-              💬 Scrie-mi pe WhatsApp
-            </ButtonLink>
           </motion.div>
           <motion.div {...fadeUp(0.32)} className="flex gap-8 mt-11 text-[13.5px] text-[#9FB2C6]">
             {stats.map((s) => (
@@ -80,48 +68,45 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* cartonaș conversație WhatsApp */}
-        <motion.div
-          initial={reduced ? undefined : { opacity: 0, y: 36, rotate: 1.5 }}
-          animate={reduced ? undefined : { opacity: 1, y: 0, rotate: 0 }}
-          transition={{ duration: 0.9, delay: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
-          className="bg-white rounded-[22px] shadow-[0_30px_60px_rgba(4,16,30,.45)] p-6 text-ink hidden sm:block"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-11 h-11 rounded-full bg-[linear-gradient(135deg,#F59E0B,#FBBF24)] flex items-center justify-center text-navy font-display font-extrabold">
-              S
-            </div>
-            <div>
-              <b className="font-display text-[14.5px]">Sergiu · asigurabil.ro</b>
-              <div className="text-muted text-xs flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-green-500 inline-block" /> online acum
-              </div>
-            </div>
-          </div>
-          {chatMessages.map((m, i) => (
-            <motion.div
-              key={i}
-              initial={reduced ? undefined : { opacity: 0, y: 10 }}
-              animate={reduced ? undefined : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1 + i * 0.7 }}
-              className={`text-sm leading-relaxed px-4 py-3 mb-2.5 max-w-[92%] ${
-                m.me
-                  ? 'bg-[#E8F6EC] rounded-[14px_14px_4px_14px] ml-auto'
-                  : 'bg-off rounded-[14px_14px_14px_4px]'
-              }`}
-            >
-              {m.text}
-            </motion.div>
-          ))}
-          <motion.div
-            initial={reduced ? undefined : { opacity: 0 }}
-            animate={reduced ? undefined : { opacity: 1 }}
-            transition={{ delay: 3.2 }}
-            className="text-xs text-green-700 font-semibold mt-2"
+        {/* grila de servicii — alege tipul direct din hero */}
+        <div id="servicii" className="scroll-mt-24">
+          <motion.p
+            {...fadeUp(0.3)}
+            className="text-[#9FB2C6] text-[13px] font-semibold uppercase tracking-[2px] mb-3.5 font-display"
           >
-            ✓✓ Mesajul tău ajunge direct la {BRAND.ownerShort}, nu într-o căsuță anonimă
-          </motion.div>
-        </motion.div>
+            Ce vrei să asiguri?
+          </motion.p>
+          <div className="grid grid-cols-3 gap-2.5">
+            {INSURANCE_TYPES.map((t, i) => (
+              <motion.button
+                key={t.id}
+                initial={reduced ? undefined : { opacity: 0, y: 20 }}
+                animate={reduced ? undefined : { opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, delay: 0.35 + i * 0.06, ease: [0.2, 0.8, 0.2, 1] }}
+                whileHover={reduced ? undefined : { scale: 1.07, y: -3 }}
+                whileTap={reduced ? undefined : { scale: 0.97 }}
+                onClick={() => {
+                  selectType(t.id)
+                  scrollToWizard()
+                }}
+                className="group relative bg-white rounded-xl px-2 py-3.5 text-center cursor-pointer border-[1.5px] border-transparent transition-colors duration-150 hover:border-amber hover:shadow-[0_14px_30px_rgba(245,158,11,.25)]"
+              >
+                <span className="block text-[22px] leading-none mb-1.5" aria-hidden>
+                  {t.icon}
+                </span>
+                <b className="block font-display text-navy text-[12.5px] leading-tight">{t.label}</b>
+                <small className="hidden sm:block text-muted text-[10.5px] leading-tight mt-0.5">
+                  {t.short}
+                </small>
+                <span className="block overflow-hidden max-h-0 opacity-0 group-hover:max-h-7 group-hover:opacity-100 transition-all duration-200">
+                  <span className="inline-block mt-1.5 bg-amber text-navy font-display font-bold text-[10.5px] px-2.5 py-1 rounded-full">
+                    Cere ofertă →
+                  </span>
+                </span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )

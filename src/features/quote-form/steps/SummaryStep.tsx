@@ -73,7 +73,8 @@ export default function SummaryStep() {
       </div>
 
       <p className="text-muted text-xs text-center mt-5">
-        🔒 Datele tale ajung doar la Sergiu și sunt folosite exclusiv pentru pregătirea ofertei.
+        🔒 Datele tale ajung doar la echipa asigurabil.ro și sunt folosite exclusiv pentru
+        pregătirea ofertei.
       </p>
 
       <button

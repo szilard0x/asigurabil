@@ -14,9 +14,10 @@ export default function ContactStep() {
 
   return (
     <div>
-      <h3 className="font-display font-bold text-navy text-2xl mb-1.5">Cum te găsește Sergiu?</h3>
+      <h3 className="font-display font-bold text-navy text-2xl mb-1.5">Cum te putem contacta?</h3>
       <p className="text-muted text-sm mb-7">
-        Datele tale ajung doar la Sergiu, pe WhatsApp — nu într-o bază de date de marketing.
+        Datele tale ajung doar la echipa asigurabil.ro, pe WhatsApp — nu într-o bază de date de
+        marketing.
       </p>
 
       <div className="flex flex-col gap-4">
@@ -69,7 +70,7 @@ export default function ContactStep() {
         </div>
         <div>
           <label className="block font-display font-semibold text-navy text-[13px] mb-1.5">
-            De unde ai auzit de mine? <span className="text-muted font-normal">(opțional)</span>
+            De unde ai auzit de noi? <span className="text-muted font-normal">(opțional)</span>
           </label>
           <div className="flex flex-wrap gap-2">
             {REFERRAL_SOURCES.map((r) => {

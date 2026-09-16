@@ -19,12 +19,12 @@ export default function DoneStep() {
         ✅
       </motion.div>
       <h3 className="font-display font-bold text-navy text-2xl mb-3">
-        Mesajul tău e la {BRAND.ownerShort}!
+        Mesajul tău a ajuns la noi!
       </h3>
       <p className="text-muted text-[15px] leading-relaxed max-w-md mx-auto">
-        Dacă ai trimis mesajul pe WhatsApp, conversația e deja deschisă — {BRAND.ownerShort}{' '}
-        răspunde de obicei în <b className="text-navy">{BRAND.responseTime}</b> în timpul
-        programului ({BRAND.schedule}).
+        Dacă ai trimis mesajul pe WhatsApp, conversația e deja deschisă — îți răspundem de obicei
+        în <b className="text-navy">{BRAND.responseTime}</b> în timpul programului (
+        {BRAND.schedule}).
       </p>
       <div className="bg-amber-soft/60 border border-amber/30 rounded-2xl px-5 py-4 max-w-md mx-auto mt-6 text-[14px] text-ink">
         ⚡ <b>E urgent?</b> Sună direct la{' '}

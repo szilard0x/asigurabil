@@ -29,7 +29,7 @@ export default function ReasonStep() {
         {type.icon} {type.reasonQuestion}
       </h3>
       <p className="text-muted text-sm mb-7">
-        Alege ce ți se potrivește sau scrie cu cuvintele tale — mă ajută să pregătesc oferte
+        Alege ce ți se potrivește sau scrie cu cuvintele tale — ne ajută să pregătim oferte
         relevante pentru situația ta.
       </p>
 

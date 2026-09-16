@@ -48,7 +48,7 @@ export const INSURANCE_TYPES: InsuranceType[] = [
         id: 'expiry',
         label: 'Când expiră polița actuală?',
         type: 'date',
-        hint: 'Îți trimit un reminder înainte să expire, ca să nu rămâi descoperit.',
+        hint: 'Îți trimitem un reminder înainte să expire, ca să nu rămâi descoperit.',
       },
     ],
   },

@@ -4,18 +4,18 @@ import SectionHeading from '../ui/SectionHeading'
 const steps = [
   {
     icon: '💬',
-    title: 'Spune-mi ce ai nevoie',
-    text: 'Completezi formularul în sub un minut sau îmi scrii direct pe WhatsApp. Îmi spui ce vrei să protejezi și de ce.',
+    title: 'Ne spui ce ai nevoie',
+    text: 'Completezi formularul în sub un minut sau ne scrii direct pe WhatsApp. Ne spui ce vrei să protejezi și de ce.',
   },
   {
     icon: '⚖️',
-    title: 'Compar ofertele pentru tine',
-    text: 'Cer oferte de la mai mulți asigurători și ți le prezint clar, cu plusuri și minusuri — pe limba ta, nu în limbaj de poliță.',
+    title: 'Comparăm ofertele pentru tine',
+    text: 'Cerem oferte de la mai mulți asigurători și ți le prezentăm clar, cu plusuri și minusuri — pe limba ta, nu în limbaj de poliță.',
   },
   {
     icon: '✍️',
-    title: 'Alegi liniștit, te ajut oricând',
-    text: 'Semnezi simplu, iar eu rămân omul tău de contact: reînnoiri, daune, întrebări — mă suni direct, nu un call-center.',
+    title: 'Alegi liniștit, te ajutăm oricând',
+    text: 'Semnezi simplu, iar noi rămânem punctul tău de contact: reînnoiri, daune, întrebări — ne suni direct, nu un call-center.',
   },
 ]
 
@@ -26,7 +26,7 @@ export default function HowItWorks() {
         <SectionHeading
           label="Cum funcționează"
           title="Trei pași, zero bătăi de cap"
-          lead="Consultanța este gratuită pentru tine — eu sunt plătit de asigurători, nu de clienți. Tu primești doar varianta câștigătoare."
+          lead="Consultanța este gratuită pentru tine — suntem plătiți de asigurători, nu de clienți. Tu primești doar varianta câștigătoare."
         />
         <div className="grid md:grid-cols-3 gap-6 mt-11">
           {steps.map((s, i) => (

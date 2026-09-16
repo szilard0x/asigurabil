@@ -7,15 +7,15 @@ import { BRAND } from '../../lib/constants'
 const faqs = [
   {
     q: 'Cât costă consultanța?',
-    a: 'Nimic. Serviciile mele sunt gratuite pentru tine — sunt remunerat de asigurători prin comision, iar prețul poliței este același ca și cum ai merge direct la ei. Diferența e că eu compar mai multe oferte pentru tine.',
+    a: 'Nimic. Serviciile noastre sunt gratuite pentru tine — suntem remunerați de asigurători prin comision, iar prețul poliței este același ca și cum ai merge direct la ei. Diferența e că noi comparăm mai multe oferte pentru tine.',
   },
   {
     q: 'Cât durează până primesc oferta?',
-    a: `De obicei răspund în ${BRAND.responseTime} în timpul programului (${BRAND.schedule}). Pentru RCA, oferta poate fi gata aproape pe loc; pentru asigurări mai complexe (viață, sănătate) pot fi necesare câteva ore ca să compar serios variantele.`,
+    a: `De obicei răspundem în ${BRAND.responseTime} în timpul programului (${BRAND.schedule}). Pentru RCA, oferta poate fi gata aproape pe loc; pentru asigurări mai complexe (viață, sănătate) pot fi necesare câteva ore ca să comparăm serios variantele.`,
   },
   {
     q: 'Ce acte îmi trebuie pentru RCA?',
-    a: 'Doar talonul mașinii (certificatul de înmatriculare) și datele proprietarului din buletin. Mi le trimiți pe WhatsApp ca poză și mă ocup eu de restul.',
+    a: 'Doar talonul mașinii (certificatul de înmatriculare) și datele proprietarului din buletin. Ni le trimiți pe WhatsApp ca poză și ne ocupăm noi de restul.',
   },
   {
     q: 'Sunt obligat să cumpăr dacă cer o ofertă?',
@@ -23,7 +23,7 @@ const faqs = [
   },
   {
     q: 'Ce se întâmplă dacă am o daună?',
-    a: 'Mă suni pe mine. Te ghidez pas cu pas prin procesul de daună — ce acte trebuie, unde le depui, ce termene ai. Nu rămâi singur cu dosarul.',
+    a: 'Ne suni pe noi. Te ghidăm pas cu pas prin procesul de daună — ce acte trebuie, unde le depui, ce termene ai. Nu rămâi singur cu dosarul.',
   },
 ]
 

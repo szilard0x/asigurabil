@@ -6,24 +6,41 @@ interface LogoProps {
   withText?: boolean
 }
 
+/**
+ * Marca asigurabil.ro: scut cu gradient amber și un „a" geometric (de la
+ * „asigurabil") în negativ — desenat din forme pure, fără dependență de font.
+ */
 export function LogoMark({
   size = 34,
-  shield = '#F59E0B',
-  check = '#0F2A43',
+  shield,
+  letter = '#0F2A43',
 }: {
   size?: number
+  /** Culoare unică pentru scut; implicit gradientul amber al brandului. */
   shield?: string
-  check?: string
+  letter?: string
 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 34 34" fill="none" aria-hidden="true">
-      <path d="M17 2 L29 7 V16 C29 24 24 29.5 17 32 C10 29.5 5 24 5 16 V7 Z" fill={shield} />
+      {!shield && (
+        <defs>
+          <linearGradient id="lg-shield" x1="5" y1="2" x2="29" y2="32" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#FBBF24" />
+            <stop offset="1" stopColor="#F59E0B" />
+          </linearGradient>
+        </defs>
+      )}
       <path
-        d="M11.5 16.5 L15.5 20.5 L23 12.5"
-        stroke={check}
+        d="M17 2 L29 7 V16 C29 24 24 29.5 17 32 C10 29.5 5 24 5 16 V7 Z"
+        fill={shield ?? 'url(#lg-shield)'}
+      />
+      {/* „a" geometric: bol + tijă rotunjită */}
+      <circle cx="15.6" cy="18.2" r="4.6" stroke={letter} strokeWidth="3" fill="none" />
+      <path
+        d="M20.8 12.6 V23.4"
+        stroke={letter}
         strokeWidth="3"
         strokeLinecap="round"
-        strokeLinejoin="round"
         fill="none"
       />
     </svg>

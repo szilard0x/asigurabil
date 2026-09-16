@@ -12,7 +12,7 @@ export function buildMessage(data: QuoteFormData): string {
     : []
 
   const lines: string[] = [
-    `Bună, Sergiu! Am completat formularul pe asigurabil.ro 👋`,
+    `Bună ziua! Am completat formularul pe asigurabil.ro 👋`,
     ``,
     `🔖 Asigurare: ${type?.label ?? '—'}`,
   ]
@@ -30,9 +30,9 @@ export function buildMessage(data: QuoteFormData): string {
   lines.push(``, `👤 Nume: ${data.name.trim()}`)
   if (data.city.trim()) lines.push(`📍 Localitate: ${data.city.trim()}`)
   if (data.phone.trim()) lines.push(`📞 Telefon: ${data.phone.trim()}`)
-  if (referral) lines.push(`💡 Am aflat de tine prin: ${referral.label}`)
+  if (referral) lines.push(`💡 Am aflat de voi prin: ${referral.label}`)
 
-  lines.push(``, `Aștept ofertele tale. Mulțumesc!`)
+  lines.push(``, `Aștept ofertele voastre. Mulțumesc!`)
   return lines.join('\n')
 }
 

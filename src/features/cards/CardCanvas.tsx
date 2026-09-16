@@ -93,8 +93,8 @@ const CardCanvas = forwardRef<HTMLDivElement, Props>(function CardCanvas(
       <div style={{ display: 'flex', alignItems: 'center', gap: 22 * u, position: 'relative' }}>
         <LogoMark
           size={92 * u}
-          shield={style === 'amber' ? '#0F2A43' : '#F59E0B'}
-          check={style === 'amber' ? '#F59E0B' : '#0F2A43'}
+          shield={style === 'amber' ? '#0F2A43' : undefined}
+          letter={style === 'amber' ? '#F59E0B' : '#0F2A43'}
         />
         <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 52 * u }}>
           asigurabil<span style={{ color: style === 'amber' ? '#FFFFFF' : '#F59E0B' }}>.ro</span>

@@ -42,8 +42,8 @@ export default function QuoteWizard() {
         <SectionHeading
           center
           label="Cere ofertă"
-          title="Spune-mi ce ai nevoie — durează sub un minut"
-          lead="La final, mesajul pleacă direct pe WhatsApp către Sergiu. Vezi exact ce trimiți și primești răspuns rapid, de la un om, nu de la un robot."
+          title="Spune-ne ce ai nevoie — durează sub un minut"
+          lead="La final, mesajul pleacă direct pe WhatsApp către echipa noastră. Vezi exact ce trimiți și primești răspuns rapid, de la un om, nu de la un robot."
         />
         <div className="max-w-2xl mx-auto mt-10 bg-off rounded-3xl shadow-card p-6 sm:p-10 overflow-hidden">
           {step !== 'done' && (

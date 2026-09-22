@@ -2,21 +2,23 @@
 // validează datele, salvează cererea + fișierele atașate (service role).
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { corsHeaders, json } from '../_shared/cors.ts'
+import { sendWhatsApp } from '../_shared/whatsapp.ts'
 
 const MAX_FILES = 5
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10 MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'application/pdf']
-const KNOWN_TYPE_IDS = [
-  'rca',
-  'casco',
-  'sanatate',
-  'viata',
-  'calatorii',
-  'locuinta',
-  'pad',
-  'malpraxis',
-  'leasing',
-]
+const TYPE_LABELS: Record<string, string> = {
+  rca: 'RCA',
+  casco: 'CASCO',
+  sanatate: 'Sănătate',
+  viata: 'Viață',
+  calatorii: 'Călătorii',
+  locuinta: 'Locuință / Bunuri',
+  pad: 'PAD',
+  malpraxis: 'Malpraxis',
+  leasing: 'Leasing',
+}
+const KNOWN_TYPE_IDS = Object.keys(TYPE_LABELS)
 
 function isValidRoPhone(phone: string): boolean {
   const cleaned = phone.replace(/[\s.\-()]/g, '')
@@ -152,6 +154,31 @@ Deno.serve(async (req) => {
     })
     if (fileRowError) console.error('file row insert failed', fileRowError)
     else uploadedCount++
+  }
+
+  // 6. Notificare instant pe WhatsApp, pentru cine a activat-o din Setări:
+  // adminii primesc orice cerere nouă; un broker doar pe cele venite prin linkul lui.
+  try {
+    const { data: recipients } = await supabase
+      .from('notification_settings')
+      .select('profile_id, profiles!inner(phone, role, disabled)')
+      .eq('instant_new_request', true)
+    const adminUrl = Deno.env.get('ADMIN_URL') ?? 'http://localhost:5174'
+    for (const r of recipients ?? []) {
+      const p = r.profiles as unknown as { phone: string | null; role: string; disabled: boolean }
+      if (!p.phone || p.disabled) continue
+      if (p.role !== 'admin' && r.profile_id !== assignedTo) continue
+      await sendWhatsApp(
+        supabase,
+        p.phone,
+        'new_request',
+        `🔔 Cerere nouă #${request.short_id}: ${name} — ${TYPE_LABELS[typeId]}` +
+          (files.length ? ` (${files.length} documente atașate)` : '') +
+          `\nDeschide: ${adminUrl}/cereri/${request.id}`,
+      )
+    }
+  } catch (err) {
+    console.error('instant notification failed', err) // niciodată nu blocăm cererea
   }
 
   return json({ shortId: request.short_id, uploadedFiles: uploadedCount })

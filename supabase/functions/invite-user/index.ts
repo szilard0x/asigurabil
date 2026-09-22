@@ -96,6 +96,19 @@ Deno.serve(async (req) => {
     return json({ ok: true })
   }
 
+  if (body.action === 'delete') {
+    const userId = String(body.userId ?? '')
+    if (!userId) return json({ error: 'missing_user_id' }, 400)
+    if (userId === userData.user.id) return json({ error: 'cannot_delete_self' }, 400)
+    // profilul dispare prin cascade; cererile lui rămân, dar nerepartizate (on delete set null)
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(userId)
+    if (error) {
+      console.error('delete failed', error)
+      return json({ error: 'delete_failed', message: error.message }, 400)
+    }
+    return json({ ok: true })
+  }
+
   if (body.action === 'deactivate' || body.action === 'reactivate') {
     const userId = String(body.userId ?? '')
     if (!userId) return json({ error: 'missing_user_id' }, 400)

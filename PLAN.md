@@ -104,20 +104,20 @@ Proposed architecture (stays on the existing free Cloudflare stack):
 
 Implemented in v1 on top of item 7: phone+password auth (no email anywhere), invites &
 password resets delivered on WhatsApp (Twilio driver; mock driver locally), daily WhatsApp
-digest of neglected requests (pg_cron), notification settings page, admin temp-password
-break-glass, `câștigat`/`pierdut` status split.
+report of neglected requests (pg_cron), **instant new-request WhatsApp notification**
+(admins get all, brokers only referral-attributed ones; both notification types OFF by
+default), notification settings + self-service password change on Setări, admin
+temp-password break-glass, admin user deletion, referral links per broker
+(asigurabil.ro/b/COD → phone swap + auto-assignment), `câștigat`/`pierdut` status split.
 
 Deferred to v2 (when Sergiu has a proper business number / more brokers):
-- **Instant WhatsApp message on each new request** (setting already exists in UI, tagged
-  "în curând"; wire a DB webhook → send function)
-- ~~Referral links per broker~~ — **implemented early** (asigurabil.ro/b/COD: landing page
-  phone numbers switch to the broker, client's WhatsApp goes to them, request auto-assigned;
-  link shown on the Setări page). Still v2: QR codes + personalized marketing cards in the
-  generator
+- QR codes + personalized marketing cards per broker in the generator (each broker's
+  referral link/QR stamped on their cards)
 - **Broker performance page** (admin): requests per status per broker, conversion, per
   referral code
 - **Migration Twilio → Meta Cloud API** (new driver in `_shared/whatsapp.ts` only)
-- Assignment notification ("ți s-a asignat cererea #X") when admin assigns a broker
+- Assignment notification ("ți s-a repartizat cererea #X") when admin assigns a broker
+- Auto-purge job for old requests (needs Sergiu's retention answer, Q4)
 
 ## Questions for Sergiu (asked/pending — answers may reshape v2)
 

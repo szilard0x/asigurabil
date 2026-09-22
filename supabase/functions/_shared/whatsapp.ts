@@ -9,7 +9,7 @@
  */
 import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2'
 
-export type MessagePurpose = 'invite' | 'reset' | 'temp_password' | 'digest'
+export type MessagePurpose = 'invite' | 'reset' | 'temp_password' | 'digest' | 'new_request'
 
 async function sendViaTwilio(toPhone: string, body: string): Promise<void> {
   const sid = Deno.env.get('TWILIO_ACCOUNT_SID')

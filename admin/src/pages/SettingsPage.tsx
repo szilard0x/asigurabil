@@ -112,6 +112,23 @@ export default function SettingsPage() {
         <div className={rowCls}>
           <div>
             <b className="block font-display text-navy text-[14.5px]">
+              Mesaj instant la fiecare cerere nouă
+            </b>
+            <span className="text-muted text-[12.5px]">
+              Util dacă clientul nu apucă să trimită mesajul WhatsApp — cererea ar rămâne doar în
+              panou. Brokerii primesc doar cererile venite prin linkul lor.
+            </span>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.instant_new_request}
+            onChange={(e) => patch({ instant_new_request: e.target.checked })}
+            className="w-5 h-5 accent-amber cursor-pointer shrink-0"
+          />
+        </div>
+        <div className={rowCls}>
+          <div>
+            <b className="block font-display text-navy text-[14.5px]">
               Raport zilnic cu cererile nelucrate
             </b>
             <span className="text-muted text-[12.5px]">
@@ -170,30 +187,87 @@ export default function SettingsPage() {
         </div>
       )}
 
-      <div className="bg-white border border-line rounded-2xl divide-y divide-line overflow-hidden opacity-80">
-        <div className="px-5 py-3 bg-amber-soft/60 border-b border-amber/30">
-          <span className="text-[12px] font-bold text-navy uppercase tracking-wide">
-            🔜 În curând — nefuncțional încă
-          </span>
-        </div>
-        <div className={rowCls}>
-          <div>
-            <b className="block font-display text-navy text-[14.5px]">
-              Mesaj instant la fiecare cerere nouă
-            </b>
-            <span className="text-muted text-[12.5px]">
-              Util dacă clientul nu apucă să trimită mesajul WhatsApp — cererea rămâne doar în
-              panou. Se activează în versiunea următoare.
-            </span>
-          </div>
-          <input
-            type="checkbox"
-            checked={settings.instant_new_request}
-            onChange={(e) => patch({ instant_new_request: e.target.checked })}
-            className="w-5 h-5 accent-amber cursor-pointer shrink-0"
-          />
-        </div>
-      </div>
+      <h2 className="font-display font-bold text-navy text-lg mb-2">Schimbă parola</h2>
+      <ChangePasswordForm />
     </div>
+  )
+}
+
+function ChangePasswordForm() {
+  const [password, setPassword] = useState('')
+  const [confirmPw, setConfirmPw] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null)
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setResult(null)
+    if (password.length < 8) {
+      setResult({ ok: false, text: 'Parola trebuie să aibă cel puțin 8 caractere.' })
+      return
+    }
+    if (password !== confirmPw) {
+      setResult({ ok: false, text: 'Parolele nu coincid.' })
+      return
+    }
+    setBusy(true)
+    const { error } = await supabase.auth.updateUser({ password })
+    setBusy(false)
+    if (error) {
+      setResult({ ok: false, text: 'Schimbarea a eșuat — încearcă din nou.' })
+      return
+    }
+    setPassword('')
+    setConfirmPw('')
+    setResult({ ok: true, text: 'Parola a fost schimbată.' })
+  }
+
+  const inputCls =
+    'bg-white border-[1.5px] border-line rounded-xl px-3.5 py-2.5 text-sm outline-none transition-all focus:border-amber'
+
+  return (
+    <form
+      onSubmit={submit}
+      className="bg-white border border-line rounded-2xl p-5 flex flex-wrap items-end gap-3"
+    >
+      <div className="flex-1 min-w-44">
+        <label className="block font-display font-semibold text-navy text-[13px] mb-1.5">
+          Parolă nouă
+        </label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="new-password"
+          required
+          className={`${inputCls} w-full`}
+        />
+      </div>
+      <div className="flex-1 min-w-44">
+        <label className="block font-display font-semibold text-navy text-[13px] mb-1.5">
+          Repetă parola
+        </label>
+        <input
+          type="password"
+          value={confirmPw}
+          onChange={(e) => setConfirmPw(e.target.value)}
+          autoComplete="new-password"
+          required
+          className={`${inputCls} w-full`}
+        />
+      </div>
+      <button
+        type="submit"
+        disabled={busy}
+        className="bg-navy text-white font-display font-semibold text-sm rounded-xl px-5 py-2.5 cursor-pointer hover:-translate-y-0.5 transition-transform disabled:opacity-50"
+      >
+        {busy ? 'Se salvează…' : 'Schimbă parola'}
+      </button>
+      {result && (
+        <p className={`w-full text-[13px] ${result.ok ? 'text-green-700' : 'text-red-500'}`}>
+          {result.text}
+        </p>
+      )}
+    </form>
   )
 }

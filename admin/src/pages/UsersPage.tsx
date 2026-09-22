@@ -8,6 +8,7 @@ const PURPOSE_LABELS: Record<string, string> = {
   reset: 'Resetare parolă',
   temp_password: 'Parolă temporară',
   digest: 'Raport zilnic',
+  new_request: 'Cerere nouă',
 }
 
 /** Transformă linkurile din corpul mesajului în ancore clickabile (utile local, cu driverul mock). */
@@ -103,6 +104,23 @@ export default function UsersPage() {
       await fetchAll()
     } catch (err) {
       setMessage({ ok: false, text: `Operațiunea a eșuat: ${(err as Error).message}` })
+    }
+  }
+
+  const deleteUser = async (p: Profile) => {
+    if (
+      !confirm(
+        `Ștergi DEFINITIV contul „${p.full_name ?? p.phone}"? Cererile lui rămân în sistem, dar devin nerepartizate.`,
+      )
+    )
+      return
+    setMessage(null)
+    try {
+      await callFn({ action: 'delete', userId: p.id })
+      setMessage({ ok: true, text: 'Contul a fost șters.' })
+      await fetchAll()
+    } catch (err) {
+      setMessage({ ok: false, text: `Ștergerea a eșuat: ${(err as Error).message}` })
     }
   }
 
@@ -220,6 +238,12 @@ export default function UsersPage() {
                     className="text-muted text-xs hover:text-navy cursor-pointer underline underline-offset-2"
                   >
                     {p.disabled ? 'Reactivează' : 'Dezactivează'}
+                  </button>
+                  <button
+                    onClick={() => deleteUser(p)}
+                    className="text-red-400 text-xs hover:text-red-600 cursor-pointer underline underline-offset-2"
+                  >
+                    Șterge
                   </button>
                 </>
               )}

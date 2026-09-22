@@ -8,6 +8,8 @@ import {
   type CardStyle,
   type FormatId,
 } from '@shared/cards/config'
+import { displayRoPhone } from '@shared/phone'
+import { useAuth } from '../lib/auth'
 
 const STYLE_LABELS: Record<CardStyle, string> = {
   navy: 'Navy (închis)',
@@ -16,10 +18,14 @@ const STYLE_LABELS: Record<CardStyle, string> = {
 }
 
 export default function CardsPage() {
+  const { profile } = useAuth()
   const [presetId, setPresetId] = useState(PRESETS[0].id)
   const [format, setFormat] = useState<FormatId>('ig-post')
   const [style, setStyle] = useState<CardStyle>(PRESETS[0].style)
   const [content, setContent] = useState<CardContent>({ ...PRESETS[0] })
+  // telefonul de pe card: pre-completat cu numărul utilizatorului logat; poate fi golit
+  const [phone, setPhone] = useState<string | null>(null)
+  const cardPhone = phone ?? (profile?.phone ? displayRoPhone(profile.phone) : '')
   const [exporting, setExporting] = useState(false)
   const exportRef = useRef<HTMLDivElement>(null)
   const previewColRef = useRef<HTMLDivElement>(null)
@@ -167,6 +173,16 @@ export default function CardsPage() {
               className={inputCls}
             />,
           )}
+          {field(
+            'Telefon pe card (gol = fără număr)',
+            <input
+              type="tel"
+              value={cardPhone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="fără număr de telefon"
+              className={inputCls}
+            />,
+          )}
           <button
             onClick={download}
             disabled={exporting}
@@ -183,7 +199,7 @@ export default function CardsPage() {
             style={{ width: width * previewScale, height: height * previewScale }}
           >
             <div style={{ transform: `scale(${previewScale})`, transformOrigin: 'top left' }}>
-              <CardCanvas content={content} style={style} format={format} />
+              <CardCanvas content={content} style={style} format={format} phone={cardPhone} />
             </div>
           </div>
           <span className="text-muted text-xs">
@@ -194,7 +210,13 @@ export default function CardsPage() {
 
       {/* nodul de export, la dimensiune reală, în afara ecranului */}
       <div style={{ position: 'fixed', left: -20000, top: 0, pointerEvents: 'none' }} aria-hidden>
-        <CardCanvas ref={exportRef} content={content} style={style} format={format} />
+        <CardCanvas
+          ref={exportRef}
+          content={content}
+          style={style}
+          format={format}
+          phone={cardPhone}
+        />
       </div>
     </div>
   )

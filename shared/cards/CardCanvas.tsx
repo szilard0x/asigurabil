@@ -7,6 +7,8 @@ interface Props {
   content: CardContent
   style: CardStyle
   format: FormatId
+  /** Telefonul afișat pe card; gol/omis → cardul se generează fără număr. */
+  phone?: string
 }
 
 const palettes: Record<
@@ -53,9 +55,10 @@ const palettes: Record<
  * `u` (unitatea = width/1080) ca să arate identic pe toate formatele.
  */
 const CardCanvas = forwardRef<HTMLDivElement, Props>(function CardCanvas(
-  { content, style, format },
+  { content, style, format, phone = BRAND.phoneDisplay },
   ref,
 ) {
+  const showPhone = phone.trim().length > 0
   const { width, height } = FORMATS[format]
   const p = palettes[style]
   const u = width / 1080
@@ -162,16 +165,22 @@ const CardCanvas = forwardRef<HTMLDivElement, Props>(function CardCanvas(
           padding: `${34 * u}px ${44 * u}px`,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: showPhone ? 'space-between' : 'center',
+          gap: 24 * u,
           fontFamily: "'Sora', sans-serif",
           fontWeight: 700,
           fontSize: 38 * u,
         }}
       >
-        <span>{content.cta}</span>
         <span>
-          {BRAND.phoneDisplay} <span aria-hidden>→</span>
+          {content.cta}
+          {!showPhone && <span aria-hidden> →</span>}
         </span>
+        {showPhone && (
+          <span>
+            {phone.trim()} <span aria-hidden>→</span>
+          </span>
+        )}
       </div>
     </div>
   )

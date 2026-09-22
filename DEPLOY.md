@@ -77,7 +77,9 @@ pleacă nicăieri — apar în „Jurnal mesaje WhatsApp" din pagina Utilizatori
 apoi „Retry deployment" ca să reconstruiască cu ele.
 
 **Panoul de admin (proiect Pages nou)**:
-- Connect to Git → același repo → **Root directory: `admin`**, build `npm ci && npm run build`,
+- Connect to Git → același repo → **Root directory: `admin`**, build
+  `npm ci --prefix .. && npm ci && npm run build` (instalează și dependențele din rădăcină —
+  folderul `shared/` își rezolvă React-ul de acolo),
   output `dist`.
 - Environment variables: `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` (aceleași valori) +
   `VITE_SITE_URL=https://asigurabil.ro` (pentru linkurile de recomandare din Setări).

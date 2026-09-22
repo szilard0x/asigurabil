@@ -1,44 +1,11 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { displayRoPhone, normalizeRoPhone } from '@shared/phone'
-import { supabase, type Profile, type OutboxRow } from '../lib/supabase'
+import { supabase, type Profile } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
-
-const PURPOSE_LABELS: Record<string, string> = {
-  invite: 'Invitație',
-  reset: 'Resetare parolă',
-  temp_password: 'Parolă temporară',
-  digest: 'Raport zilnic',
-  new_request: 'Cerere nouă',
-}
-
-/** Transformă linkurile din corpul mesajului în ancore clickabile (utile local, cu driverul mock). */
-function Linkify({ text }: { text: string }) {
-  const parts = text.split(/(https?:\/\/\S+)/g)
-  return (
-    <>
-      {parts.map((p, i) =>
-        /^https?:\/\//.test(p) ? (
-          <a
-            key={i}
-            href={p}
-            target="_blank"
-            rel="noopener"
-            className="text-amber underline underline-offset-2 break-all"
-          >
-            {p}
-          </a>
-        ) : (
-          <span key={i}>{p}</span>
-        ),
-      )}
-    </>
-  )
-}
 
 export default function UsersPage() {
   const { session } = useAuth()
   const [profiles, setProfiles] = useState<Profile[]>([])
-  const [outbox, setOutbox] = useState<OutboxRow[]>([])
   const [phone, setPhone] = useState('')
   const [fullName, setFullName] = useState('')
   const [role, setRole] = useState<'broker' | 'admin'>('broker')
@@ -46,12 +13,8 @@ export default function UsersPage() {
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
 
   const fetchAll = async () => {
-    const [{ data: p }, { data: o }] = await Promise.all([
-      supabase.from('profiles').select('*').order('created_at'),
-      supabase.from('whatsapp_outbox').select('*').order('created_at', { ascending: false }).limit(15),
-    ])
+    const { data: p } = await supabase.from('profiles').select('*').order('created_at')
     setProfiles(p ?? [])
-    setOutbox(o ?? [])
   }
 
   useEffect(() => {
@@ -79,7 +42,7 @@ export default function UsersPage() {
         ok: true,
         text: res.whatsappSent
           ? `Invitație trimisă pe WhatsApp către ${phone}.`
-          : `Cont creat, dar mesajul WhatsApp a eșuat — vezi jurnalul de mai jos sau setează o parolă temporară.`,
+          : `Cont creat, dar mesajul WhatsApp a eșuat — vezi tab-ul „Jurnal" sau setează o parolă temporară.`,
       })
       setPhone('')
       setFullName('')
@@ -257,43 +220,8 @@ export default function UsersPage() {
       <p className="text-muted text-xs mt-3">
         Invitatul primește pe WhatsApp un link cu care își setează parola, apoi se autentifică cu
         telefonul. Dacă mesajul nu ajunge, folosește „Parolă temp." și comunică-i-o direct.
+        Mesajele trimise (cu linkurile lor) se văd în tab-ul „Jurnal".
       </p>
-
-      <h2 className="font-display font-bold text-navy text-lg mt-10 mb-3">
-        Jurnal mesaje WhatsApp
-      </h2>
-      <p className="text-muted text-xs mb-3">
-        Ultimele mesaje trimise de sistem. În mediul local (driver „mock") mesajele NU pleacă pe
-        WhatsApp — linkurile se deschid direct de aici.
-      </p>
-      <div className="bg-white border border-line rounded-2xl divide-y divide-line overflow-hidden">
-        {outbox.map((m) => (
-          <div key={m.id} className="px-5 py-3.5">
-            <div className="flex items-center justify-between gap-3 mb-1">
-              <b className="font-display text-navy text-[13px]">
-                {PURPOSE_LABELS[m.purpose] ?? m.purpose} → {displayRoPhone(m.to_phone)}
-              </b>
-              <span
-                className={`text-[10.5px] font-bold px-2 py-0.5 rounded-full ${
-                  m.status === 'sent'
-                    ? 'bg-green-100 text-green-700'
-                    : m.status === 'failed'
-                      ? 'bg-red-100 text-red-600'
-                      : 'bg-off text-muted border border-line'
-                }`}
-              >
-                {m.status === 'mock' ? 'LOCAL' : m.status.toUpperCase()}
-              </span>
-            </div>
-            <p className="text-[12.5px] text-muted whitespace-pre-wrap leading-relaxed">
-              <Linkify text={m.body} />
-            </p>
-          </div>
-        ))}
-        {outbox.length === 0 && (
-          <p className="text-muted text-sm px-5 py-6">Niciun mesaj trimis încă.</p>
-        )}
-      </div>
     </div>
   )
 }

@@ -8,6 +8,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { corsHeaders, json } from '../_shared/cors.ts'
 import { normalizeRoPhone, phoneToSyntheticEmail } from '../_shared/phone.ts'
 import { sendWhatsApp } from '../_shared/whatsapp.ts'
+import { logActivity } from '../_shared/activity.ts'
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
@@ -71,12 +72,15 @@ Deno.serve(async (req) => {
       return json({ error: 'invite_failed', message: error?.message ?? 'no link' }, 400)
     }
 
-    const sent = await sendWhatsApp(
-      supabaseAdmin,
-      phone,
-      'invite',
+    const waBody =
       `Bună, ${fullName}! Ai fost invitat(ă) în echipa asigurabil.ro. ` +
-        `Deschide linkul ca să îți setezi parola:\n${link.properties.action_link}`,
+      `Deschide linkul ca să îți setezi parola:\n${link.properties.action_link}`
+    const sent = await sendWhatsApp(supabaseAdmin, phone, 'invite', waBody)
+    await logActivity(
+      supabaseAdmin,
+      'user_invited',
+      `${fullName} (0${phone.slice(2)}) a fost invitat(ă) ca ${role}`,
+      { user_id: link.user?.id, phone, role, wa_body: waBody, wa_sent: sent },
     )
     return json({ ok: true, userId: link.user?.id, whatsappSent: sent })
   }
@@ -93,6 +97,17 @@ Deno.serve(async (req) => {
       email_confirm: true,
     })
     if (error) return json({ error: 'update_failed', message: error.message }, 400)
+    const { data: target } = await supabaseAdmin
+      .from('profiles')
+      .select('full_name, phone')
+      .eq('id', userId)
+      .maybeSingle()
+    await logActivity(
+      supabaseAdmin,
+      'temp_password_set',
+      `Parolă temporară setată pentru ${target?.full_name ?? target?.phone ?? userId}`,
+      { user_id: userId },
+    )
     return json({ ok: true })
   }
 
@@ -100,12 +115,23 @@ Deno.serve(async (req) => {
     const userId = String(body.userId ?? '')
     if (!userId) return json({ error: 'missing_user_id' }, 400)
     if (userId === userData.user.id) return json({ error: 'cannot_delete_self' }, 400)
+    const { data: target } = await supabaseAdmin
+      .from('profiles')
+      .select('full_name, phone')
+      .eq('id', userId)
+      .maybeSingle()
     // profilul dispare prin cascade; cererile lui rămân, dar nerepartizate (on delete set null)
     const { error } = await supabaseAdmin.auth.admin.deleteUser(userId)
     if (error) {
       console.error('delete failed', error)
       return json({ error: 'delete_failed', message: error.message }, 400)
     }
+    await logActivity(
+      supabaseAdmin,
+      'user_deleted',
+      `Contul „${target?.full_name ?? target?.phone ?? userId}" a fost șters definitiv`,
+      { user_id: userId, phone: target?.phone ?? null },
+    )
     return json({ ok: true })
   }
 
@@ -123,6 +149,17 @@ Deno.serve(async (req) => {
       return json({ error: 'update_failed', message: error.message }, 400)
     }
     await supabaseAdmin.from('profiles').update({ disabled }).eq('id', userId)
+    const { data: target } = await supabaseAdmin
+      .from('profiles')
+      .select('full_name, phone')
+      .eq('id', userId)
+      .maybeSingle()
+    await logActivity(
+      supabaseAdmin,
+      disabled ? 'user_deactivated' : 'user_reactivated',
+      `Contul „${target?.full_name ?? target?.phone ?? userId}" a fost ${disabled ? 'dezactivat' : 'reactivat'}`,
+      { user_id: userId },
+    )
     return json({ ok: true })
   }
 

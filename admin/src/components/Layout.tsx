@@ -29,9 +29,14 @@ export default function Layout() {
               Setări
             </NavLink>
             {profile?.role === 'admin' && (
-              <NavLink to="/utilizatori" className={linkCls}>
-                Utilizatori
-              </NavLink>
+              <>
+                <NavLink to="/utilizatori" className={linkCls}>
+                  Utilizatori
+                </NavLink>
+                <NavLink to="/jurnal" className={linkCls}>
+                  Jurnal
+                </NavLink>
+              </>
             )}
           </nav>
           <div className="flex items-center gap-3 text-sm justify-end">

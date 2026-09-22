@@ -3,6 +3,7 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { corsHeaders, json } from '../_shared/cors.ts'
 import { sendWhatsApp } from '../_shared/whatsapp.ts'
+import { logActivity } from '../_shared/activity.ts'
 
 const MAX_FILES = 5
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10 MB
@@ -96,14 +97,18 @@ Deno.serve(async (req) => {
   // 3b. Cererea venită printr-un link de recomandare se repartizează automat
   // brokerului respectiv
   let assignedTo: string | null = null
+  let assignedName: string | null = null
   const brokerCode = String(payload.brokerCode ?? '').toUpperCase()
   if (/^[A-Z0-9]{4,12}$/.test(brokerCode)) {
     const { data: broker } = await supabase
       .from('profiles')
-      .select('id, disabled')
+      .select('id, disabled, full_name')
       .eq('referral_code', brokerCode)
       .maybeSingle()
-    if (broker && !broker.disabled) assignedTo = broker.id
+    if (broker && !broker.disabled) {
+      assignedTo = broker.id
+      assignedName = broker.full_name
+    }
   }
 
   // 4. Inserează cererea (short_id generat pe client, dacă e valid — pentru
@@ -155,6 +160,22 @@ Deno.serve(async (req) => {
     if (fileRowError) console.error('file row insert failed', fileRowError)
     else uploadedCount++
   }
+
+  await logActivity(
+    supabase,
+    'request_created',
+    `Cerere nouă #${request.short_id} de la ${name} — ${TYPE_LABELS[typeId]}` +
+      (uploadedCount ? `, ${uploadedCount} documente` : '') +
+      (assignedName ? `. Repartizată automat: ${assignedName}` : ''),
+    {
+      request_id: request.id,
+      short_id: request.short_id,
+      type_id: typeId,
+      assigned_to: assignedTo,
+      files: uploadedCount,
+      referral_id: payload.referralId ?? null,
+    },
+  )
 
   // 6. Notificare instant pe WhatsApp, pentru cine a activat-o din Setări:
   // adminii primesc orice cerere nouă; un broker doar pe cele venite prin linkul lui.

@@ -58,11 +58,11 @@ export default function SettingsPage() {
     })
     setBusy(false)
     if (error || data?.error) {
-      setTestResult('Trimiterea a eșuat — verifică jurnalul din Utilizatori.')
+      setTestResult('Trimiterea a eșuat — verifică tab-ul „Jurnal".')
       return
     }
     setTestResult(
-      'Raportul a fost generat — vezi jurnalul de mesaje din pagina Utilizatori (local nu pleacă pe WhatsApp).',
+      'Raportul a fost generat — vezi tab-ul „Jurnal" (local, mesajul nu pleacă pe WhatsApp).',
     )
   }
 

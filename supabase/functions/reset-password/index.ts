@@ -5,6 +5,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { corsHeaders, json } from '../_shared/cors.ts'
 import { normalizeRoPhone } from '../_shared/phone.ts'
 import { sendWhatsApp } from '../_shared/whatsapp.ts'
+import { logActivity } from '../_shared/activity.ts'
 
 async function verifyTurnstile(token: string, ip: string | null): Promise<boolean> {
   const secret = Deno.env.get('TURNSTILE_SECRET_KEY')
@@ -66,13 +67,16 @@ Deno.serve(async (req) => {
     return generic
   }
 
-  await sendWhatsApp(
-    supabaseAdmin,
-    phone,
-    'reset',
+  const waBody =
     `Bună${profile.full_name ? `, ${profile.full_name}` : ''}! Ai cerut resetarea parolei ` +
-      `pentru panoul asigurabil.ro. Deschide linkul ca să setezi o parolă nouă:\n` +
-      `${link.properties.action_link}\n\nDacă nu ai fost tu, ignoră acest mesaj.`,
+    `pentru panoul asigurabil.ro. Deschide linkul ca să setezi o parolă nouă:\n` +
+    `${link.properties.action_link}\n\nDacă nu ai fost tu, ignoră acest mesaj.`
+  const sent = await sendWhatsApp(supabaseAdmin, phone, 'reset', waBody)
+  await logActivity(
+    supabaseAdmin,
+    'password_reset',
+    `Link de resetare a parolei trimis pentru ${profile.full_name ?? `0${phone.slice(2)}`}`,
+    { user_id: profile.id, phone, wa_body: waBody, wa_sent: sent },
   )
   return generic
 })

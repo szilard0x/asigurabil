@@ -10,6 +10,7 @@ import RequestDetailPage from './pages/RequestDetailPage'
 import CardsPage from './pages/CardsPage'
 import UsersPage from './pages/UsersPage'
 import SettingsPage from './pages/SettingsPage'
+import LogsPage from './pages/LogsPage'
 
 /** Utilizatorii veniți dintr-un link de invitație/resetare își setează întâi parola. */
 function PasswordSetupGate({ children }: { children: ReactNode }) {
@@ -52,6 +53,14 @@ export default function App() {
               element={
                 <RequireAdmin>
                   <UsersPage />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/jurnal"
+              element={
+                <RequireAdmin>
+                  <LogsPage />
                 </RequireAdmin>
               }
             />

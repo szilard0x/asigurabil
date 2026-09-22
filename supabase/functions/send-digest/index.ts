@@ -6,6 +6,7 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { corsHeaders, json } from '../_shared/cors.ts'
 import { sendWhatsApp } from '../_shared/whatsapp.ts'
+import { logActivity } from '../_shared/activity.ts'
 
 const STATUS_LABELS: Record<string, string> = {
   nou: 'Nou',
@@ -34,6 +35,7 @@ Deno.serve(async (req) => {
 
   // Autorizare: secretul cron SAU un admin autentificat (buton „Trimite acum")
   let force = false
+  let callerId: string | null = null
   const cronSecret = Deno.env.get('DIGEST_SECRET')
   const givenSecret = req.headers.get('x-digest-secret')
   if (cronSecret && givenSecret === cronSecret) {
@@ -52,6 +54,7 @@ Deno.serve(async (req) => {
     if (profile?.role !== 'admin') return json({ error: 'forbidden' }, 403)
     const body = await req.json().catch(() => ({}))
     force = body?.force === true
+    callerId = userData.user.id
   }
 
   const hour = bucharestHour()
@@ -59,10 +62,16 @@ Deno.serve(async (req) => {
     new Date(),
   )
 
-  const { data: recipients } = await supabaseAdmin
+  // Testul manual („Trimite acum") merge doar la adminul care l-a apăsat,
+  // indiferent dacă are raportul zilnic activat; cron-ul respectă setarea.
+  let recipientsQuery = supabaseAdmin
     .from('notification_settings')
     .select('profile_id, digest_hour, stale_days, last_digest_at, profiles!inner(phone, full_name, role, disabled)')
-    .eq('daily_digest', true)
+  recipientsQuery =
+    force && callerId
+      ? recipientsQuery.eq('profile_id', callerId)
+      : recipientsQuery.eq('daily_digest', true)
+  const { data: recipients } = await recipientsQuery
 
   let sentCount = 0
   for (const r of recipients ?? []) {
@@ -110,12 +119,15 @@ Deno.serve(async (req) => {
           s.updated_at,
         ).toLocaleDateString('ro-RO')})`,
     )
-    const ok = await sendWhatsApp(
-      supabaseAdmin,
-      p.phone,
-      'digest',
+    const waBody =
       `📋 asigurabil.ro — ${stale.length} cereri care așteaptă:\n${lines.join('\n')}\n\n` +
-        `Deschide panoul: ${Deno.env.get('ADMIN_URL') ?? 'http://localhost:5174'}`,
+      `Deschide panoul: ${Deno.env.get('ADMIN_URL') ?? 'http://localhost:5174'}`
+    const ok = await sendWhatsApp(supabaseAdmin, p.phone, 'digest', waBody)
+    await logActivity(
+      supabaseAdmin,
+      'report_sent',
+      `Raport zilnic trimis către ${p.full_name ?? `0${p.phone.slice(2)}`} — ${stale.length} cereri${force ? ' (test manual)' : ''}`,
+      { user_id: r.profile_id, count: stale.length, forced: force, wa_body: waBody, wa_sent: ok },
     )
     if (ok) {
       sentCount++

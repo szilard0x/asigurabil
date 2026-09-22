@@ -2,12 +2,29 @@ import { useEffect, useState } from 'react'
 import { supabase, type NotificationSettings } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 
+/** Adresa publică a site-ului — în producție se setează VITE_SITE_URL=https://asigurabil.ro */
+const SITE_URL: string = import.meta.env.VITE_SITE_URL ?? 'http://localhost:5173'
+
 export default function SettingsPage() {
   const { session, profile } = useAuth()
   const [settings, setSettings] = useState<NotificationSettings | null>(null)
   const [saved, setSaved] = useState(false)
   const [testResult, setTestResult] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  const referralLink = profile ? `${SITE_URL}/b/${profile.referral_code}` : null
+
+  const copyLink = async () => {
+    if (!referralLink) return
+    try {
+      await navigator.clipboard.writeText(referralLink)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    } catch {
+      prompt('Copiază linkul manual:', referralLink)
+    }
+  }
 
   useEffect(() => {
     if (!session) return
@@ -57,11 +74,37 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-2xl">
-      <div className="flex items-center gap-3 mb-6">
-        <h1 className="font-display font-bold text-navy text-2xl">Setări notificări</h1>
+      <h1 className="font-display font-bold text-navy text-2xl mb-6">Setări</h1>
+
+      {/* linkul personal de recomandare */}
+      {referralLink && (
+        <div className="bg-white border border-line rounded-2xl px-5 py-4 mb-8">
+          <b className="block font-display text-navy text-[14.5px] mb-1">
+            Linkul tău de recomandare
+          </b>
+          <p className="text-muted text-[12.5px] mb-3">
+            Clienții care intră pe site prin acest link văd numărul tău de telefon, mesajul
+            WhatsApp ajunge la tine, iar cererea îți este repartizată automat.
+          </p>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <code className="bg-off border border-line rounded-lg px-3 py-2 text-[13px] text-navy select-all">
+              {referralLink}
+            </code>
+            <button
+              onClick={copyLink}
+              className="bg-amber text-navy font-display font-semibold text-[13px] rounded-lg px-3.5 py-2 cursor-pointer hover:-translate-y-0.5 transition-transform"
+            >
+              {copied ? '✓ Copiat' : 'Copiază'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="flex items-center gap-3 mb-2">
+        <h2 className="font-display font-bold text-navy text-lg">Notificări</h2>
         {saved && <span className="text-green-700 text-sm">✓ Salvat</span>}
       </div>
-      <p className="text-muted text-sm mb-6">
+      <p className="text-muted text-sm mb-4">
         Notificările sosesc pe WhatsApp, pe numărul tău de cont.
       </p>
 

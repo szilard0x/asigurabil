@@ -48,8 +48,12 @@ export function buildMessage(data: QuoteFormData, meta: MessageMeta = {}): strin
   return lines.join('\n')
 }
 
-export function buildWhatsAppLink(data: QuoteFormData, meta: MessageMeta = {}): string {
-  return whatsAppUrl(buildMessage(data, meta))
+export function buildWhatsAppLink(
+  data: QuoteFormData,
+  meta: MessageMeta = {},
+  phone?: string,
+): string {
+  return whatsAppUrl(buildMessage(data, meta), phone)
 }
 
 export function buildEmailLink(data: QuoteFormData): string {

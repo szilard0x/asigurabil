@@ -22,6 +22,8 @@ create table public.profiles (
   phone text unique,
   full_name text,
   role public.app_role not null default 'broker',
+  -- codul din linkul personal de recomandare (asigurabil.ro/b/<cod>)
+  referral_code text unique not null default upper(substr(replace(gen_random_uuid()::text, '-', ''), 1, 6)),
   -- oglindește ban-ul din auth (setat de funcția invite-user la dezactivare)
   disabled boolean not null default false,
   created_at timestamptz not null default now()

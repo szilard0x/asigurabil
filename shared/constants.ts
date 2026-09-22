@@ -14,8 +14,8 @@ export const BRAND = {
   schedule: 'L–V, 9:00–18:00',
 } as const
 
-export const whatsAppUrl = (text: string) =>
-  `https://wa.me/${BRAND.phoneWhatsApp}?text=${encodeURIComponent(text)}`
+export const whatsAppUrl = (text: string, phone: string = BRAND.phoneWhatsApp) =>
+  `https://wa.me/${phone}?text=${encodeURIComponent(text)}`
 
 export const mailtoUrl = (subject: string, body: string) =>
   `mailto:${BRAND.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`

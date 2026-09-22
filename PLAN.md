@@ -110,9 +110,10 @@ break-glass, `câștigat`/`pierdut` status split.
 Deferred to v2 (when Sergiu has a proper business number / more brokers):
 - **Instant WhatsApp message on each new request** (setting already exists in UI, tagged
   "în curând"; wire a DB webhook → send function)
-- **Referral links per broker** (`asigurabil.ro/b/COD`): client's WhatsApp message goes to
-  the attributed broker's number, request auto-assigned, QR + personalized marketing cards
-  in the generator
+- ~~Referral links per broker~~ — **implemented early** (asigurabil.ro/b/COD: landing page
+  phone numbers switch to the broker, client's WhatsApp goes to them, request auto-assigned;
+  link shown on the Setări page). Still v2: QR codes + personalized marketing cards in the
+  generator
 - **Broker performance page** (admin): requests per status per broker, conversion, per
   referral code
 - **Migration Twilio → Meta Cloud API** (new driver in `_shared/whatsapp.ts` only)

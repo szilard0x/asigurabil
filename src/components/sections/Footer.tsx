@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom'
 import Logo from '../Logo'
 import { BRAND, whatsAppUrl } from '../../lib/constants'
+import { useBroker } from '../../lib/broker'
 
 export default function Footer() {
+  const contact = useBroker()
   return (
     <footer className="bg-navy text-[#8FA5BB]">
       <div className="max-w-6xl mx-auto px-6 py-14">
@@ -18,13 +20,13 @@ export default function Footer() {
             <b className="block font-display text-white text-sm mb-4">Contact</b>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <a href={`tel:${BRAND.phoneTel}`} className="hover:text-white transition-colors">
-                  📞 {BRAND.phoneDisplay}
+                <a href={`tel:${contact.phoneTel}`} className="hover:text-white transition-colors">
+                  📞 {contact.phoneDisplay}
                 </a>
               </li>
               <li>
                 <a
-                  href={whatsAppUrl('Bună ziua! Am o întrebare despre asigurări.')}
+                  href={whatsAppUrl('Bună ziua! Am o întrebare despre asigurări.', contact.phoneWhatsApp)}
                   target="_blank"
                   rel="noopener"
                   className="hover:text-white transition-colors"

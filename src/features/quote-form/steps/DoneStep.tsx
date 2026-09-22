@@ -2,10 +2,12 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { useQuoteForm } from '../QuoteFormContext'
 import { buildWhatsAppLink } from '../buildMessage'
 import { BRAND } from '../../../lib/constants'
+import { useBroker } from '../../../lib/broker'
 
 export default function DoneStep() {
   const { data, reset, files, sentShortId } = useQuoteForm()
   const reduced = useReducedMotion()
+  const contact = useBroker()
   const meta = sentShortId ? { shortId: sentShortId, fileCount: files.length } : {}
 
   return (
@@ -29,13 +31,13 @@ export default function DoneStep() {
       </p>
       <div className="bg-amber-soft/60 border border-amber/30 rounded-2xl px-5 py-4 max-w-md mx-auto mt-6 text-[14px] text-ink">
         ⚡ <b>E urgent?</b> Sună direct la{' '}
-        <a href={`tel:${BRAND.phoneTel}`} className="font-bold text-navy underline underline-offset-2">
-          {BRAND.phoneDisplay}
+        <a href={`tel:${contact.phoneTel}`} className="font-bold text-navy underline underline-offset-2">
+          {contact.phoneDisplay}
         </a>
       </div>
       <div className="flex items-center justify-center gap-5 mt-7 text-[13px] text-muted">
         <a
-          href={buildWhatsAppLink(data, meta)}
+          href={buildWhatsAppLink(data, meta, contact.phoneWhatsApp)}
           target="_blank"
           rel="noopener"
           className="hover:text-navy underline underline-offset-2"

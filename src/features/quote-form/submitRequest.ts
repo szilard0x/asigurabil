@@ -28,6 +28,7 @@ export async function submitRequest(
   files: File[],
   turnstileToken: string | null,
   shortId: string,
+  brokerCode: string | null = null,
 ): Promise<boolean> {
   if (!backendEnabled || !turnstileToken) return false
 
@@ -46,6 +47,7 @@ export async function submitRequest(
       city: data.city,
       gdprConsent: data.gdprConsent,
       shortId,
+      brokerCode,
     }),
   )
   for (const f of files.slice(0, MAX_FILES)) form.append('files', f, f.name)

@@ -429,3 +429,7 @@ verify_jwt = false
 # Digestul zilnic — apelată de cron (secret propriu) sau de admin (JWT).
 [functions.send-digest]
 verify_jwt = false
+
+# Rezolvarea codurilor de recomandare — publică (doar date afișate oricum pe materiale).
+[functions.broker-info]
+verify_jwt = false

@@ -91,6 +91,19 @@ Deno.serve(async (req) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
   )
 
+  // 3b. Cererea venită printr-un link de recomandare se repartizează automat
+  // brokerului respectiv
+  let assignedTo: string | null = null
+  const brokerCode = String(payload.brokerCode ?? '').toUpperCase()
+  if (/^[A-Z0-9]{4,12}$/.test(brokerCode)) {
+    const { data: broker } = await supabase
+      .from('profiles')
+      .select('id, disabled')
+      .eq('referral_code', brokerCode)
+      .maybeSingle()
+    if (broker && !broker.disabled) assignedTo = broker.id
+  }
+
   // 4. Inserează cererea (short_id generat pe client, dacă e valid — pentru
   // corelarea cu mesajul WhatsApp; altfel îl generează baza de date)
   const clientShortId = String(payload.shortId ?? '')
@@ -99,6 +112,7 @@ Deno.serve(async (req) => {
     .from('requests')
     .insert({
       ...shortIdOverride,
+      assigned_to: assignedTo,
       type_id: typeId,
       reasons: Array.isArray(payload.reasonIds) ? payload.reasonIds.map(String) : [],
       reason_text: String(payload.reasonText ?? '').slice(0, 2000),

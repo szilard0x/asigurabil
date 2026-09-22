@@ -171,7 +171,7 @@ export default function RequestDetailPage() {
               onChange={(e) => patch({ assigned_to: e.target.value || null })}
               className={inputCls}
             >
-              <option value="">Neasignată — o vede doar adminul</option>
+              <option value="">Nerepartizată — o vede doar adminul</option>
               {team.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.full_name || p.email}

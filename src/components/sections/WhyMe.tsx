@@ -2,6 +2,7 @@ import Reveal from '../ui/Reveal'
 import SectionHeading from '../ui/SectionHeading'
 import { LogoMark } from '../Logo'
 import { BRAND } from '../../lib/constants'
+import { useBroker } from '../../lib/broker'
 
 const bullets = [
   {
@@ -27,6 +28,7 @@ const bullets = [
 ]
 
 export default function WhyMe() {
+  const contact = useBroker()
   return (
     <section className="max-w-6xl mx-auto px-6 py-21">
       <div className="grid lg:grid-cols-[.9fr_1.1fr] gap-12 items-center">
@@ -48,7 +50,7 @@ export default function WhyMe() {
               iei în cunoștință de cauză."
             </p>
             <div className="mt-7 pt-6 border-t border-white/15 text-sm text-[#C7D3E0]">
-              📞 {BRAND.phoneDisplay} · {BRAND.schedule}
+              📞 {contact.phoneDisplay} · {BRAND.schedule}
             </div>
           </div>
         </Reveal>

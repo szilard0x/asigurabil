@@ -17,6 +17,7 @@ export interface Profile {
   phone: string | null
   full_name: string | null
   role: 'admin' | 'broker'
+  referral_code: string
   disabled: boolean
   created_at: string
 }

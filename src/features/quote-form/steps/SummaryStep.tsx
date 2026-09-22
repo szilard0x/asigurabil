@@ -6,11 +6,12 @@ import { submitRequest, generateShortId } from '../submitRequest'
 import { backendEnabled, TURNSTILE_SITE_KEY } from '../../../lib/backend'
 import { Button } from '../../../components/ui/Button'
 import TurnstileWidget from '@shared/TurnstileWidget'
-import { BRAND } from '../../../lib/constants'
+import { useBroker } from '../../../lib/broker'
 
 export default function SummaryStep() {
   const { data, update, next, back, goTo, files, setSentShortId } = useQuoteForm()
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const contact = useBroker()
   const type = INSURANCE_TYPES.find((t) => t.id === data.typeId)
   const referral = REFERRAL_SOURCES.find((r) => r.id === data.referralId)
   const reasons = type
@@ -47,10 +48,11 @@ export default function SummaryStep() {
     // Arhivarea în panou pornește în paralel; eșecul ei nu blochează WhatsApp-ul.
     if (canSubmit) {
       setSentShortId(shortId)
-      void submitRequest(data, files, turnstileToken, shortId)
+      void submitRequest(data, files, turnstileToken, shortId, contact.code)
     }
     const meta = canSubmit ? { shortId, fileCount: files.length } : {}
-    window.open(buildWhatsAppLink(data, meta), '_blank', 'noopener')
+    // mesajul merge la brokerul din linkul de recomandare (sau la numărul implicit)
+    window.open(buildWhatsAppLink(data, meta, contact.phoneWhatsApp), '_blank', 'noopener')
     next() // → ecranul de confirmare
   }
 
@@ -116,8 +118,8 @@ export default function SummaryStep() {
             Nu ai WhatsApp? Trimite prin email
           </a>
           <span aria-hidden>·</span>
-          <a href={`tel:${BRAND.phoneTel}`} className="hover:text-navy underline underline-offset-2">
-            Sună direct: {BRAND.phoneDisplay}
+          <a href={`tel:${contact.phoneTel}`} className="hover:text-navy underline underline-offset-2">
+            Sună direct: {contact.phoneDisplay}
           </a>
         </div>
       </div>

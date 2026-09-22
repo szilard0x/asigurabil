@@ -175,7 +175,7 @@ export default function InboxPage() {
                     {r.name} · {type?.label ?? r.type_id}
                     {r.assigned_to === null && (
                       <span className="ml-2 align-middle text-[10px] font-bold text-amber border border-amber/50 rounded-full px-1.5 py-0.5 uppercase">
-                        de asignat
+                        de repartizat
                       </span>
                     )}
                   </b>

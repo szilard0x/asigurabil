@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+/* shared/ e în afara rădăcinii aplicației — Tailwind trebuie să-i scaneze clasele explicit */
+@source "../../shared";
 
 /* Tema „Încredere" — navy + amber, Sora / Inter */
 @theme {

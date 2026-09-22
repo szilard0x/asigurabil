@@ -14,24 +14,23 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-off">
       <header className="bg-navy sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
-            <Logo variant="light" height={28} />
-            <nav className="flex items-center gap-1">
-              <NavLink to="/" end className={linkCls}>
-                Cereri
+        {/* trei zone, ca pe landing: logo stânga, navigație centrată, utilizator dreapta */}
+        <div className="max-w-6xl mx-auto px-6 py-3 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+          <Logo variant="light" height={28} />
+          <nav className="flex items-center gap-1 justify-center">
+            <NavLink to="/" end className={linkCls}>
+              Cereri
+            </NavLink>
+            <NavLink to="/carduri" className={linkCls}>
+              Carduri
+            </NavLink>
+            {profile?.role === 'admin' && (
+              <NavLink to="/utilizatori" className={linkCls}>
+                Utilizatori
               </NavLink>
-              <NavLink to="/carduri" className={linkCls}>
-                Carduri
-              </NavLink>
-              {profile?.role === 'admin' && (
-                <NavLink to="/utilizatori" className={linkCls}>
-                  Utilizatori
-                </NavLink>
-              )}
-            </nav>
-          </div>
-          <div className="flex items-center gap-3 text-sm">
+            )}
+          </nav>
+          <div className="flex items-center gap-3 text-sm justify-end">
             <span className="text-[#8FA5BB] hidden sm:inline">
               {profile?.full_name || profile?.email}
               {profile?.role === 'admin' && (

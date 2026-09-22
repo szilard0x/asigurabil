@@ -82,7 +82,10 @@ export default function InboxPage() {
       const key = r.referral_id ?? 'necunoscut'
       counts[key] = (counts[key] ?? 0) + 1
     }
-    return Object.entries(counts).sort((a, b) => b[1] - a[1])
+    // toate canalele de pe landing, inclusiv cele cu zero; „necunoscut" doar dacă există
+    const rows = REFERRAL_SOURCES.map((s) => [s.id, counts[s.id] ?? 0] as [string, number])
+    if (counts['necunoscut']) rows.push(['necunoscut', counts['necunoscut']])
+    return rows
   }, [requests])
 
   const inputCls =
@@ -111,13 +114,12 @@ export default function InboxPage() {
         <div className="bg-white border-[1.5px] border-line rounded-2xl px-4 py-3">
           <span className="text-muted text-xs block mb-1">De unde vin clienții</span>
           <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-            {referralCounts.slice(0, 4).map(([id, count]) => (
-              <span key={id} className="text-[12.5px] text-ink">
+            {referralCounts.map(([id, count]) => (
+              <span key={id} className={`text-[12.5px] ${count === 0 ? 'text-muted' : 'text-ink'}`}>
                 {REFERRAL_SOURCES.find((r) => r.id === id)?.label ?? 'Necunoscut'}:{' '}
                 <b className="font-display">{count}</b>
               </span>
             ))}
-            {referralCounts.length === 0 && <span className="text-muted text-xs">—</span>}
           </div>
         </div>
       </div>
@@ -177,10 +179,13 @@ export default function InboxPage() {
                     {r.city ? ` · ${r.city}` : ''} · #{r.short_id}
                   </span>
                 </span>
-                <span className="text-muted text-xs shrink-0 hidden sm:inline">
+                {/* lățimi fixe: ora și statusul stau mereu aliniate pe coloană */}
+                <span className="text-muted text-xs shrink-0 hidden sm:inline w-24 text-right">
                   {timeAgo(r.created_at)}
                 </span>
-                <StatusBadge status={r.status} />
+                <span className="shrink-0 w-24 text-center">
+                  <StatusBadge status={r.status} />
+                </span>
               </Link>
             )
           })}

@@ -22,9 +22,11 @@ pleacă nicăieri — apar în „Jurnal mesaje WhatsApp" din pagina Utilizatori
 2. În repo: `npx supabase link --project-ref <ref-ul proiectului>` (cere login CLI).
 3. `npx supabase db push` — aplică `supabase/migrations/0001_init.sql` (schema, RLS, bucket, cron).
 4. `npx supabase functions deploy submit-request invite-user reset-password send-digest`.
-5. Dashboard → **Authentication → URL Configuration**: Site URL = `https://admin.asigurabil.ro`,
-   Redirect URLs: adaugă același domeniu. (Signup-ul public e oprit; conturile se fac doar prin
-   invitație, iar autentificarea e pe telefon + parolă.)
+5. Setările de auth din `config.toml` NU se aplică automat în cloud — rulează
+   `npx supabase config push` (sincronizează signup oprit, URL-uri etc.) SAU setează manual în
+   Dashboard: **Authentication → URL Configuration** (Site URL = `https://admin.asigurabil.ro`
+   + Redirect URLs) și **Authentication → Sign In/Up → dezactivează „Allow new users to sign
+   up"** (conturile se fac doar prin invitație, autentificarea e pe telefon + parolă).
 6. Secrete pentru funcții (pe lângă Turnstile, vezi mai jos):
    ```
    npx supabase secrets set ADMIN_URL=https://admin.asigurabil.ro \

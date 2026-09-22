@@ -124,15 +124,15 @@ Deferred to v2 (when Sergiu has a proper business number / more brokers):
 1. **Business WhatsApp number**: when you're ready, we need a dedicated number for system
    messages (the API number can't be used in the normal WhatsApp app). Cheap prepaid SIM or
    virtual number — who buys it, and under the II's Meta business profile?
-2. **Client-facing number**: today clients' WhatsApp messages go to your personal number.
-   Keep it that way when brokers join (each broker's personal number via their referral
-   link), or route everything through one central number?
+2. **Client-facing number**: referral links already route clients' WhatsApp to each broker's
+   personal number; organic visitors get yours. OK long-term, or should organic traffic ever
+   go through a central number?
 3. **Organic requests when there are several brokers**: all to you with manual assignment
    (current), or automatic round-robin?
 4. **Data retention**: how long should requests + uploaded documents be kept? (Privacy
    policy promises deletion on request; an auto-purge rule needs a number of months.)
-5. **Assigned-request visibility**: may every broker see all requests (current), or should
-   brokers only see their own? (Matters once non-family brokers join.)
-6. **Digest contents**: currently "new + unchanged for N days, excluding won/lost". Should
+5. ~~Assigned-request visibility~~ — **decided & implemented**: brokers see only requests
+   assigned to them; admins see everything.
+6. **Report contents**: currently "new + unchanged for N days, excluding won/lost". Should
    'ofertat' requests older than X days get a separate nudge ("clientul nu a răspuns")?
 7. **Who can invite**: only admin (current) — OK long-term?

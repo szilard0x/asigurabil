@@ -182,6 +182,8 @@ export interface QuoteFormData {
   name: string
   phone: string
   city: string
+  /** Acord GDPR pentru prelucrarea datelor — obligatoriu înainte de trimitere. */
+  gdprConsent: boolean
 }
 
 export const EMPTY_FORM: QuoteFormData = {
@@ -193,4 +195,5 @@ export const EMPTY_FORM: QuoteFormData = {
   name: '',
   phone: '',
   city: '',
+  gdprConsent: false,
 }

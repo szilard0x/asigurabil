@@ -7,7 +7,7 @@ const bullets = [
   {
     icon: '🎯',
     title: 'Oferte comparate, nu „ce se vinde azi"',
-    text: 'Lucrăm cu mai mulți asigurători, deci recomandarea noastră e în interesul tău, nu al unei singure companii.',
+    text: 'Lucrăm cu mai mulți asiguratori, deci recomandarea noastră e în interesul tău, nu al unei singure companii.',
   },
   {
     icon: '⚡',
@@ -55,7 +55,7 @@ export default function WhyMe() {
         <div>
           <SectionHeading
             label="De ce cu noi"
-            title="O echipă de partea ta, nu a asigurătorului"
+            title="O echipă de partea ta, nu a asiguratorului"
           />
           <div className="grid sm:grid-cols-2 gap-5 mt-8">
             {bullets.map((b) => (

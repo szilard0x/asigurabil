@@ -10,7 +10,7 @@ const steps = [
   {
     icon: '⚖️',
     title: 'Comparăm ofertele pentru tine',
-    text: 'Cerem oferte de la mai mulți asigurători și ți le prezentăm clar, cu plusuri și minusuri — pe limba ta, nu în limbaj de poliță.',
+    text: 'Cerem oferte de la mai mulți asiguratori și ți le prezentăm clar, cu plusuri și minusuri — pe limba ta, nu în limbaj de poliță.',
   },
   {
     icon: '✍️',
@@ -26,7 +26,7 @@ export default function HowItWorks() {
         <SectionHeading
           label="Cum funcționează"
           title="Trei pași, zero bătăi de cap"
-          lead="Consultanța este gratuită pentru tine — suntem plătiți de asigurători, nu de clienți. Tu primești doar varianta câștigătoare."
+          lead="Consultanța este gratuită pentru tine — suntem plătiți de asiguratori, nu de clienți. Tu primești doar varianta câștigătoare."
         />
         <div className="grid md:grid-cols-3 gap-6 mt-11">
           {steps.map((s, i) => (

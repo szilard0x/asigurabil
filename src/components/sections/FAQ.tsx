@@ -7,7 +7,7 @@ import { BRAND } from '../../lib/constants'
 const faqs = [
   {
     q: 'Cât costă consultanța?',
-    a: 'Nimic. Serviciile noastre sunt gratuite pentru tine — suntem remunerați de asigurători prin comision, iar prețul poliței este același ca și cum ai merge direct la ei. Diferența e că noi comparăm mai multe oferte pentru tine.',
+    a: 'Nimic. Serviciile noastre sunt gratuite pentru tine — suntem remunerați de asiguratori prin comision, iar prețul poliței este același ca și cum ai merge direct la ei. Diferența e că noi comparăm mai multe oferte pentru tine.',
   },
   {
     q: 'Cât durează până primesc oferta?',

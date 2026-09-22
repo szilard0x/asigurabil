@@ -64,7 +64,7 @@ export default function Hero() {
           </motion.h1>
           <motion.p {...fadeUp(0.16)} className="mt-5 mb-8 text-[17px] leading-relaxed text-[#C7D3E0] max-w-lg">
             Găsim pentru tine cea mai potrivită asigurare — RCA, sănătate, viață, călătorii și nu
-            numai. Comparăm ofertele mai multor asigurători și tu alegi în cunoștință de cauză.
+            numai. Comparăm ofertele mai multor asiguratori și tu alegi în cunoștință de cauză.
             Simplu, rapid, fără costuri ascunse.
           </motion.p>
           <motion.div {...fadeUp(0.24)} className="flex flex-wrap gap-3.5">
@@ -86,22 +86,19 @@ export default function Hero() {
             {...fadeUp(0.3)}
             className="text-[#9FB2C6] text-[13px] font-semibold uppercase tracking-[2px] mb-3.5 font-display"
           >
-            Ce vrei să asiguri?
+            De ce asigurare ai nevoie?
           </motion.p>
           <div className="relative">
             <div className="grid grid-cols-3 gap-2.5">
               {INSURANCE_TYPES.map((t, i) => (
                 <motion.button
                   key={t.id}
-                  layoutId={reduced ? undefined : `type-${t.id}`}
                   initial={reduced ? undefined : { opacity: 0, y: 20 }}
                   animate={reduced ? undefined : { opacity: 1, y: 0 }}
                   transition={{ duration: 0.55, delay: 0.35 + i * 0.06, ease: [0.2, 0.8, 0.2, 1] }}
-                  whileHover={reduced || expandedId ? undefined : { scale: 1.06, y: -3 }}
-                  whileTap={reduced ? undefined : { scale: 0.97 }}
                   onClick={() => setExpandedId(t.id)}
                   aria-expanded={expandedId === t.id}
-                  className="group relative bg-white rounded-xl px-2 py-3.5 text-center cursor-pointer border-[1.5px] border-transparent transition-colors duration-150 hover:border-amber hover:shadow-[0_14px_30px_rgba(245,158,11,.25)]"
+                  className="group relative bg-white rounded-xl px-2 py-3.5 text-center cursor-pointer border-[1.5px] border-transparent transition-[transform,border-color,box-shadow] duration-150 motion-safe:hover:scale-[1.06] motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.97] hover:border-amber hover:shadow-[0_14px_30px_rgba(245,158,11,.25)]"
                 >
                   <span className="block text-[22px] leading-none mb-1.5" aria-hidden>
                     {t.icon}
@@ -119,11 +116,10 @@ export default function Hero() {
               {expanded && (
                 <motion.div
                   key={expanded.id}
-                  layoutId={reduced ? undefined : `type-${expanded.id}`}
-                  initial={reduced ? { opacity: 0 } : undefined}
-                  animate={reduced ? { opacity: 1 } : undefined}
-                  exit={reduced ? { opacity: 0 } : { opacity: 0, transition: { duration: 0.15 } }}
-                  transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+                  initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.85 }}
+                  transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
                   className="absolute inset-0 bg-white rounded-2xl shadow-[0_24px_55px_rgba(4,16,30,.45)] p-5 sm:p-6 flex flex-col text-left overflow-hidden"
                 >
                   <button

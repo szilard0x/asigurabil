@@ -12,28 +12,17 @@ interface LogoProps {
  */
 export function LogoMark({
   size = 34,
-  shield,
+  shield = '#F59E0B',
   letter = '#0F2A43',
 }: {
   size?: number
-  /** Culoare unică pentru scut; implicit gradientul amber al brandului. */
+  /** Culoare pentru scut; implicit amber-ul brandului (identic cu butoanele). */
   shield?: string
   letter?: string
 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 34 34" fill="none" aria-hidden="true">
-      {!shield && (
-        <defs>
-          <linearGradient id="lg-shield" x1="5" y1="2" x2="29" y2="32" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#FBBF24" />
-            <stop offset="1" stopColor="#F59E0B" />
-          </linearGradient>
-        </defs>
-      )}
-      <path
-        d="M17 2 L29 7 V16 C29 24 24 29.5 17 32 C10 29.5 5 24 5 16 V7 Z"
-        fill={shield ?? 'url(#lg-shield)'}
-      />
+      <path d="M17 2 L29 7 V16 C29 24 24 29.5 17 32 C10 29.5 5 24 5 16 V7 Z" fill={shield} />
       {/* „a" geometric: bol + tijă rotunjită */}
       <circle cx="15.6" cy="18.2" r="4.6" stroke={letter} strokeWidth="3" fill="none" />
       <path

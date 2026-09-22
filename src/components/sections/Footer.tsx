@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import Logo from '../Logo'
 import { BRAND, whatsAppUrl } from '../../lib/constants'
 
@@ -10,7 +11,7 @@ export default function Footer() {
             <Logo variant="light" height={30} />
             <p className="text-sm leading-relaxed mt-4 max-w-xs">
               {BRAND.motto} Consultanță gratuită în asigurări, cu oferte comparate de la mai mulți
-              asigurători.
+              asiguratori.
             </p>
           </div>
           <div>
@@ -53,6 +54,9 @@ export default function Footer() {
         <div className="border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row justify-between gap-3 text-xs text-[#5F7893]">
           <span>© {new Date().getFullYear()} asigurabil.ro · Toate drepturile rezervate</span>
           <span className="flex gap-5">
+            <Link to="/confidentialitate" className="hover:text-white transition-colors">
+              Politica de confidențialitate
+            </Link>
             <a href="https://anpc.ro" target="_blank" rel="noopener" className="hover:text-white transition-colors">
               ANPC
             </a>

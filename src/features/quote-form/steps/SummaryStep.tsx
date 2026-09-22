@@ -5,7 +5,7 @@ import { Button } from '../../../components/ui/Button'
 import { BRAND } from '../../../lib/constants'
 
 export default function SummaryStep() {
-  const { data, next, back, goTo } = useQuoteForm()
+  const { data, update, next, back, goTo } = useQuoteForm()
   const type = INSURANCE_TYPES.find((t) => t.id === data.typeId)
   const referral = REFERRAL_SOURCES.find((r) => r.id === data.referralId)
   const reasons = type
@@ -57,8 +57,30 @@ export default function SummaryStep() {
         ))}
       </div>
 
-      <div className="mt-7 flex flex-col items-stretch gap-3">
-        <Button onClick={openWhatsApp} className="w-full">
+      <label className="flex items-start gap-2.5 mt-6 text-[13px] text-muted leading-relaxed cursor-pointer select-none">
+        <input
+          type="checkbox"
+          checked={data.gdprConsent}
+          onChange={(e) => update({ gdprConsent: e.target.checked })}
+          className="mt-0.5 w-4 h-4 shrink-0 accent-amber cursor-pointer"
+        />
+        <span>
+          Sunt de acord cu prelucrarea datelor mele personale în scopul pregătirii ofertei,
+          conform{' '}
+          <a
+            href="/confidentialitate"
+            target="_blank"
+            rel="noopener"
+            className="text-navy font-semibold underline underline-offset-2"
+          >
+            Politicii de confidențialitate
+          </a>
+          .
+        </span>
+      </label>
+
+      <div className="mt-5 flex flex-col items-stretch gap-3">
+        <Button onClick={openWhatsApp} disabled={!data.gdprConsent} className="w-full">
           Asigură-te — trimite pe WhatsApp 💬
         </Button>
         <div className="flex items-center justify-center gap-5 text-[13px] text-muted">

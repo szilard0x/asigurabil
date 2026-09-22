@@ -3,6 +3,9 @@
 Notes from Sergiu's second review, expanded into an actionable plan. Items 1–5 are quick
 fixes, 6 is small but needs a content page, 7 is a separate project phase.
 
+> **Status (2026-09-22): items 1–6 implemented and verified.** Item 7 (admin panel) is the
+> remaining milestone — open questions at the bottom of section 7 still need Sergiu's answers.
+
 ## 1. Remove the floating WhatsApp button
 
 Remove `FloatingWhatsApp` from `LandingPage.tsx` (bottom-right corner button). Component file

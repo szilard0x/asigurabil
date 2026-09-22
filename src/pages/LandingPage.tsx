@@ -5,7 +5,6 @@ import QuoteWizard from '../features/quote-form/QuoteWizard'
 import WhyMe from '../components/sections/WhyMe'
 import FAQ from '../components/sections/FAQ'
 import Footer from '../components/sections/Footer'
-import FloatingWhatsApp from '../components/sections/FloatingWhatsApp'
 import { QuoteFormProvider } from '../features/quote-form/QuoteFormContext'
 
 export default function LandingPage() {
@@ -20,7 +19,6 @@ export default function LandingPage() {
         <FAQ />
       </main>
       <Footer />
-      <FloatingWhatsApp />
     </QuoteFormProvider>
   )
 }

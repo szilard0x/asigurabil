@@ -3,8 +3,12 @@
 Notes from Sergiu's second review, expanded into an actionable plan. Items 1–5 are quick
 fixes, 6 is small but needs a content page, 7 is a separate project phase.
 
-> **Status (2026-09-22): items 1–6 implemented and verified.** Item 7 (admin panel) is the
-> remaining milestone — open questions at the bottom of section 7 still need Sergiu's answers.
+> **Status (2026-09-22): items 1–7 implemented and verified locally.** Item 7 was built with
+> Supabase (see `supabase/` for the infra-as-code, `admin/` for the panel, `DEPLOY.md` for the
+> cloud setup checklist) instead of the Workers/D1/R2 stack sketched below. Public form is
+> protected by Cloudflare Turnstile; no email notifications (decided against). Remaining:
+> the one-time cloud setup from DEPLOY.md (Supabase project, Turnstile keys, Pages project,
+> admin.asigurabil.ro).
 
 ## 1. Remove the floating WhatsApp button
 

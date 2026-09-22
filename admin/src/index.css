@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+
+/* Tema „Încredere" — navy + amber, Sora / Inter */
+@theme {
+  --font-display: 'Sora', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  --color-navy: #0f2a43;
+  --color-navy-2: #16395a;
+  --color-navy-3: #1e4a73;
+  --color-amber: #f59e0b;
+  --color-amber-2: #fbbf24;
+  --color-amber-soft: #fde9c8;
+  --color-off: #f6f8fb;
+  --color-ink: #182635;
+  --color-muted: #5b6b7c;
+  --color-line: #e4eaf1;
+
+  --shadow-card: 0 20px 50px rgba(15, 42, 67, 0.1);
+  --shadow-amber: 0 8px 24px rgba(245, 158, 11, 0.35);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  background: var(--color-off);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

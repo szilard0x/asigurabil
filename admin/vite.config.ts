@@ -7,7 +7,13 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      '@shared': path.resolve(__dirname, 'shared'),
+      '@shared': path.resolve(__dirname, '../shared'),
+    },
+  },
+  server: {
+    fs: {
+      // permite importurile din ../shared în dev
+      allow: [path.resolve(__dirname, '..')],
     },
   },
 })

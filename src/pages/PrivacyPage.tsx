@@ -80,22 +80,30 @@ export default function PrivacyPage() {
         <Section title="Unde ajung datele tale">
           <p>
             Mesajul generat de formular este trimis chiar de tine, prin aplicația WhatsApp (sau
-            prin e-mail), direct către noi. Datele nu sunt salvate pe serverele site-ului și nu
-            sunt transmise altor terți în scop de marketing. Pentru pregătirea ofertelor, datele
-            relevante pot fi transmise asiguratorilor prin intermediul brokerului {BRAND.partner},
-            strict în scopul cotației.
+            prin e-mail), direct către noi. În paralel, cererea ta — inclusiv documentele pe care
+            alegi să le atașezi — este salvată în evidența noastră internă de cereri, găzduită
+            securizat pe platforma Supabase, pe servere din Uniunea Europeană. La această evidență
+            au acces doar consultanții echipei asigurabil.ro, pe bază de cont individual.
+          </p>
+          <p>
+            Datele nu sunt transmise terților în scop de marketing. Pentru pregătirea ofertelor,
+            datele relevante pot fi transmise asiguratorilor prin intermediul brokerului{' '}
+            {BRAND.partner}, strict în scopul cotației.
           </p>
           <p>
             Comunicarea prin WhatsApp este supusă și politicii de confidențialitate WhatsApp/Meta,
-            aplicabilă oricărei conversații purtate prin această aplicație.
+            aplicabilă oricărei conversații purtate prin această aplicație. Formularul este
+            protejat anti-spam cu Cloudflare Turnstile, care poate prelucra date tehnice (ex.
+            adresa IP) conform politicii Cloudflare.
           </p>
         </Section>
 
         <Section title="Cât timp le păstrăm">
           <p>
-            Păstrăm conversația și datele din cerere atât timp cât este necesar pentru pregătirea
-            ofertei și relația ulterioară cu tine (de exemplu, reamintirea scadențelor, dacă ți-o
-            dorești). Poți cere oricând ștergerea lor.
+            Păstrăm conversația, datele din cerere și documentele atașate atât timp cât este
+            necesar pentru pregătirea ofertei și relația ulterioară cu tine (de exemplu,
+            reamintirea scadențelor, dacă ți-o dorești). Poți cere oricând ștergerea lor, iar noi
+            le eliminăm din evidența internă.
           </p>
         </Section>
 

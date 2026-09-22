@@ -11,6 +11,12 @@ interface QuoteFormCtx {
   step: WizardStep
   /** direcția ultimei navigări, pentru animația de slide */
   direction: 1 | -1
+  /** Documente atașate (doar în memorie — nu supraviețuiesc unui refresh). */
+  files: File[]
+  setFiles: (files: File[]) => void
+  /** Id-ul scurt al ultimei cereri trimise (pentru linkul „redeschide mesajul"). */
+  sentShortId: string | null
+  setSentShortId: (id: string | null) => void
   update: (patch: Partial<QuoteFormData>) => void
   goTo: (step: WizardStep) => void
   next: () => void
@@ -44,6 +50,8 @@ export function QuoteFormProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<QuoteFormData>(initial.data)
   const [step, setStep] = useState<WizardStep>(initial.step)
   const [direction, setDirection] = useState<1 | -1>(1)
+  const [files, setFiles] = useState<File[]>([])
+  const [sentShortId, setSentShortId] = useState<string | null>(null)
 
   useEffect(() => {
     try {
@@ -92,12 +100,29 @@ export function QuoteFormProvider({ children }: { children: ReactNode }) {
 
   const reset = () => {
     setData(EMPTY_FORM)
+    setFiles([])
     setDirection(-1)
     setStep('type')
   }
 
   return (
-    <Ctx.Provider value={{ data, step, direction, update, goTo, next, back, selectType, reset }}>
+    <Ctx.Provider
+      value={{
+        data,
+        step,
+        direction,
+        files,
+        setFiles,
+        sentShortId,
+        setSentShortId,
+        update,
+        goTo,
+        next,
+        back,
+        selectType,
+        reset,
+      }}
+    >
       {children}
     </Ctx.Provider>
   )

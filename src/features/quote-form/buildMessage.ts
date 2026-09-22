@@ -1,8 +1,15 @@
 import { INSURANCE_TYPES, REFERRAL_SOURCES, type QuoteFormData } from './config'
 import { whatsAppUrl, mailtoUrl } from '../../lib/constants'
 
+export interface MessageMeta {
+  /** Id-ul scurt al cererii salvate în panou — pentru corelare. */
+  shortId?: string
+  /** Numărul de documente atașate (vizibile doar în panou). */
+  fileCount?: number
+}
+
 /** Human-readable summary of the collected data, used for WhatsApp and email. */
-export function buildMessage(data: QuoteFormData): string {
+export function buildMessage(data: QuoteFormData, meta: MessageMeta = {}): string {
   const type = INSURANCE_TYPES.find((t) => t.id === data.typeId)
   const referral = REFERRAL_SOURCES.find((r) => r.id === data.referralId)
   const reasons = type
@@ -32,12 +39,17 @@ export function buildMessage(data: QuoteFormData): string {
   if (data.phone.trim()) lines.push(`📞 Telefon: ${data.phone.trim()}`)
   if (referral) lines.push(`💡 Am aflat de voi prin: ${referral.label}`)
 
+  if (meta.shortId) lines.push(``, `🧾 Cerere #${meta.shortId}`)
+  if (meta.fileCount) {
+    lines.push(`📎 Am atașat ${meta.fileCount === 1 ? 'un document' : `${meta.fileCount} documente`} în cerere`)
+  }
+
   lines.push(``, `Aștept ofertele voastre. Mulțumesc!`)
   return lines.join('\n')
 }
 
-export function buildWhatsAppLink(data: QuoteFormData): string {
-  return whatsAppUrl(buildMessage(data))
+export function buildWhatsAppLink(data: QuoteFormData, meta: MessageMeta = {}): string {
+  return whatsAppUrl(buildMessage(data, meta))
 }
 
 export function buildEmailLink(data: QuoteFormData): string {

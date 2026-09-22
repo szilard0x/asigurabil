@@ -1,7 +1,7 @@
 import { forwardRef } from 'react'
 import { FORMATS, type CardContent, type CardStyle, type FormatId } from './config'
-import { LogoMark } from '../../components/Logo'
-import { BRAND } from '../../lib/constants'
+import { LogoMark } from '../Logo'
+import { BRAND } from '../constants'
 
 interface Props {
   content: CardContent

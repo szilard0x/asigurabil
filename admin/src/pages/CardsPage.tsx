@@ -1,15 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
-import CardCanvas from '../features/cards/CardCanvas'
+import CardCanvas from '@shared/cards/CardCanvas'
 import {
   FORMATS,
   PRESETS,
   type CardContent,
   type CardStyle,
   type FormatId,
-} from '../features/cards/config'
-import { Button } from '../components/ui/Button'
-import Logo from '../components/Logo'
+} from '@shared/cards/config'
 
 const STYLE_LABELS: Record<CardStyle, string> = {
   navy: 'Navy (închis)',
@@ -84,15 +82,12 @@ export default function CardsPage() {
     'w-full bg-white border-[1.5px] border-line rounded-xl px-3.5 py-2.5 text-sm outline-none transition-all focus:border-amber focus:shadow-[0_0_0_3px_rgba(245,158,11,.12)]'
 
   return (
-    <main className="min-h-screen bg-off">
-      <header className="bg-navy py-4">
-        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-          <Logo variant="light" height={30} />
-          <span className="text-[#8FA5BB] text-sm font-display">Generator de carduri social media</span>
-        </div>
-      </header>
+    <div>
+      <h1 className="font-display font-bold text-navy text-2xl mb-6">
+        Generator de carduri social media
+      </h1>
 
-      <div className="max-w-6xl mx-auto px-6 py-10 grid lg:grid-cols-[380px_1fr] gap-10 items-start">
+      <div className="grid lg:grid-cols-[380px_1fr] gap-10 items-start">
         {/* panou de control */}
         <div className="bg-white border border-line rounded-2xl p-6 flex flex-col gap-4 shadow-card">
           {field(
@@ -172,9 +167,13 @@ export default function CardsPage() {
               className={inputCls}
             />,
           )}
-          <Button onClick={download} disabled={exporting} className="mt-2 w-full">
+          <button
+            onClick={download}
+            disabled={exporting}
+            className="mt-2 w-full bg-amber text-navy font-display font-semibold rounded-xl py-3 cursor-pointer transition-all hover:-translate-y-0.5 shadow-amber disabled:opacity-50"
+          >
             {exporting ? 'Se generează…' : `Descarcă PNG ${width}×${height}`}
-          </Button>
+          </button>
         </div>
 
         {/* previzualizare scalată */}
@@ -197,6 +196,6 @@ export default function CardsPage() {
       <div style={{ position: 'fixed', left: -20000, top: 0, pointerEvents: 'none' }} aria-hidden>
         <CardCanvas ref={exportRef} content={content} style={style} format={format} />
       </div>
-    </main>
+    </div>
   )
 }

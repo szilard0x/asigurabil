@@ -1,11 +1,16 @@
+import { useState } from 'react'
 import { INSURANCE_TYPES, REFERRAL_SOURCES } from '../config'
 import { useQuoteForm } from '../QuoteFormContext'
 import { buildWhatsAppLink, buildEmailLink } from '../buildMessage'
+import { submitRequest, generateShortId } from '../submitRequest'
+import { backendEnabled } from '../../../lib/backend'
 import { Button } from '../../../components/ui/Button'
+import TurnstileWidget from '../../../components/TurnstileWidget'
 import { BRAND } from '../../../lib/constants'
 
 export default function SummaryStep() {
-  const { data, update, next, back, goTo } = useQuoteForm()
+  const { data, update, next, back, goTo, files, setSentShortId } = useQuoteForm()
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const type = INSURANCE_TYPES.find((t) => t.id === data.typeId)
   const referral = REFERRAL_SOURCES.find((r) => r.id === data.referralId)
   const reasons = type
@@ -25,10 +30,27 @@ export default function SummaryStep() {
     { label: 'Telefon', value: data.phone, edit: 'contact' },
     ...(data.city.trim() ? [{ label: 'Localitate', value: data.city.trim(), edit: 'contact' as const }] : []),
     ...(referral ? [{ label: 'Ai aflat prin', value: referral.label, edit: 'contact' as const }] : []),
+    ...(files.length
+      ? [
+          {
+            label: 'Documente atașate',
+            value: files.map((f) => f.name).join(', '),
+            edit: 'contact' as const,
+          },
+        ]
+      : []),
   ]
 
   const openWhatsApp = () => {
-    window.open(buildWhatsAppLink(data), '_blank', 'noopener')
+    const shortId = generateShortId()
+    const canSubmit = backendEnabled && turnstileToken !== null
+    // Arhivarea în panou pornește în paralel; eșecul ei nu blochează WhatsApp-ul.
+    if (canSubmit) {
+      setSentShortId(shortId)
+      void submitRequest(data, files, turnstileToken, shortId)
+    }
+    const meta = canSubmit ? { shortId, fileCount: files.length } : {}
+    window.open(buildWhatsAppLink(data, meta), '_blank', 'noopener')
     next() // → ecranul de confirmare
   }
 
@@ -78,6 +100,12 @@ export default function SummaryStep() {
           .
         </span>
       </label>
+
+      {backendEnabled && (
+        <div className="mt-4 flex justify-center">
+          <TurnstileWidget onToken={setTurnstileToken} />
+        </div>
+      )}
 
       <div className="mt-5 flex flex-col items-stretch gap-3">
         <Button onClick={openWhatsApp} disabled={!data.gdprConsent} className="w-full">

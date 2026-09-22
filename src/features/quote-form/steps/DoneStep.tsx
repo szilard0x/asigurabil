@@ -4,8 +4,9 @@ import { buildWhatsAppLink } from '../buildMessage'
 import { BRAND } from '../../../lib/constants'
 
 export default function DoneStep() {
-  const { data, reset } = useQuoteForm()
+  const { data, reset, files, sentShortId } = useQuoteForm()
   const reduced = useReducedMotion()
+  const meta = sentShortId ? { shortId: sentShortId, fileCount: files.length } : {}
 
   return (
     <div className="text-center py-4">
@@ -34,7 +35,7 @@ export default function DoneStep() {
       </div>
       <div className="flex items-center justify-center gap-5 mt-7 text-[13px] text-muted">
         <a
-          href={buildWhatsAppLink(data)}
+          href={buildWhatsAppLink(data, meta)}
           target="_blank"
           rel="noopener"
           className="hover:text-navy underline underline-offset-2"

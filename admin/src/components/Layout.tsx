@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import Logo from '@shared/Logo'
+import { displayRoPhone } from '@shared/phone'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 
@@ -24,6 +25,9 @@ export default function Layout() {
             <NavLink to="/carduri" className={linkCls}>
               Carduri
             </NavLink>
+            <NavLink to="/setari" className={linkCls}>
+              Setări
+            </NavLink>
             {profile?.role === 'admin' && (
               <NavLink to="/utilizatori" className={linkCls}>
                 Utilizatori
@@ -32,7 +36,7 @@ export default function Layout() {
           </nav>
           <div className="flex items-center gap-3 text-sm justify-end">
             <span className="text-[#8FA5BB] hidden sm:inline">
-              {profile?.full_name || profile?.email}
+              {profile?.full_name || (profile?.phone ? displayRoPhone(profile.phone) : '')}
               {profile?.role === 'admin' && (
                 <span className="ml-1.5 bg-amber text-navy text-[10.5px] font-bold px-1.5 py-0.5 rounded">
                   ADMIN

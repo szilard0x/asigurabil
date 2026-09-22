@@ -11,20 +11,53 @@ npm run dev                  # site public :5173  (.env.local e deja configurat)
 cd admin && npm run dev      # panou :5174        (admin/.env.local la fel)
 ```
 
-Cont de admin local: `npx tsx scripts/create-admin.ts --url http://127.0.0.1:55321 --service-key <SERVICE_ROLE_KEY din 'npx supabase status'> --email sergiu@asigurabil.local --password AdminLocal123`.
-Emailurile de invitație locale apar în Mailpit: http://127.0.0.1:55324. `npx supabase db reset` re-aplică migrațiile + seed.
+Cont de admin local: `npx tsx scripts/create-admin.ts --url http://127.0.0.1:55321 --service-key <SERVICE_ROLE_KEY din 'npx supabase status'> --phone "0751 461 173" --password AdminLocal123`.
+Autentificarea e pe TELEFON + parolă. Local, mesajele WhatsApp (invitații, resetări, digest) NU
+pleacă nicăieri — apar în „Jurnal mesaje WhatsApp" din pagina Utilizatori, cu linkuri clickabile.
+`npx supabase db reset` re-aplică migrațiile + seed.
 
 ## 1. Proiect Supabase (cloud)
 
 1. [database.new](https://database.new) → proiect nou, **region: EU (Frankfurt)** (GDPR), plan Free.
 2. În repo: `npx supabase link --project-ref <ref-ul proiectului>` (cere login CLI).
-3. `npx supabase db push` — aplică `supabase/migrations/0001_init.sql` (schema, RLS, bucket).
-4. `npx supabase functions deploy submit-request invite-user`.
+3. `npx supabase db push` — aplică `supabase/migrations/0001_init.sql` (schema, RLS, bucket, cron).
+4. `npx supabase functions deploy submit-request invite-user reset-password send-digest`.
 5. Dashboard → **Authentication → URL Configuration**: Site URL = `https://admin.asigurabil.ro`,
-   Redirect URLs: adaugă același domeniu. (Signup-ul public e oprit din config; conturile se fac
-   doar prin invitație.)
-6. Creează contul lui Sergiu:
-   `npx tsx scripts/create-admin.ts --url https://<ref>.supabase.co --service-key <service_role din Dashboard → API> --email <emailul lui> --password <parolă temporară>`
+   Redirect URLs: adaugă același domeniu. (Signup-ul public e oprit; conturile se fac doar prin
+   invitație, iar autentificarea e pe telefon + parolă.)
+6. Secrete pentru funcții (pe lângă Turnstile, vezi mai jos):
+   ```
+   npx supabase secrets set ADMIN_URL=https://admin.asigurabil.ro \
+     DIGEST_SECRET=<un-șir-aleator-lung> \
+     WHATSAPP_PROVIDER=twilio \
+     TWILIO_ACCOUNT_SID=<sid> TWILIO_AUTH_TOKEN=<token> TWILIO_WHATSAPP_FROM=whatsapp:+<numărul Twilio>
+   ```
+   (Până configurezi Twilio poți lăsa `WHATSAPP_PROVIDER=mock` — mesajele se văd doar în
+   jurnalul din Utilizatori.)
+7. Configurarea cron-ului pentru digest — în Dashboard → SQL Editor:
+   ```sql
+   insert into public.app_config (key, value) values
+     ('functions_url', 'https://<ref>.supabase.co/functions/v1'),
+     ('digest_secret', '<același DIGEST_SECRET de la pasul 6>')
+   on conflict (key) do update set value = excluded.value;
+   ```
+8. Creează contul lui Sergiu (autentificare cu telefonul + parola):
+   `npx tsx scripts/create-admin.ts --url https://<ref>.supabase.co --service-key <service_role din Dashboard → API> --phone "0751 461 173" --password <parolă temporară>`
+
+## 1b. Twilio (mesaje WhatsApp: invitații, resetări de parolă, digest)
+
+1. Cont pe [twilio.com](https://www.twilio.com) (trial merge pentru început).
+2. **Varianta rapidă — Sandbox** (suficientă cât timp Sergiu e singurul utilizator): în consolă
+   → Messaging → Try WhatsApp. Sergiu trimite o singură dată codul „join …" de pe telefonul lui
+   către numărul de sandbox, apoi poate primi mesaje. `TWILIO_WHATSAPP_FROM` = numărul de sandbox.
+   Limitare: fiecare destinatar nou trebuie să facă „join", iar sesiunea expiră după 72h fără
+   mesaje — pentru un singur om e OK, pentru mai mulți brokeri devine incomod.
+3. **Varianta serioasă** (când apar mai mulți brokeri): cumperi un număr Twilio (~1 $/lună) și îl
+   înregistrezi ca WhatsApp Sender (Messaging → Senders) — procesul trece prin Meta (profil de
+   business; PFA/II e acceptat) și poate dura câteva zile. Mesajele inițiate de sistem folosesc
+   șabloane aprobate (~0,04 € bucata; la volumul actual, câțiva lei pe lună).
+4. Migrarea ulterioară la Meta Cloud API = un driver nou în
+   `supabase/functions/_shared/whatsapp.ts`, restul rămâne neschimbat.
 
 ## 2. Cloudflare Turnstile
 

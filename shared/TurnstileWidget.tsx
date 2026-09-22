@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import { TURNSTILE_SITE_KEY } from '../lib/backend'
 
 declare global {
   interface Window {
@@ -29,12 +28,17 @@ function loadScript(): Promise<void> {
 }
 
 interface Props {
+  /** Cheia publică a site-ului (implicit: cheia de test Cloudflare, doar pentru dev). */
+  sitekey?: string
   /** Primește tokenul (sau null la expirare/eroare). */
   onToken: (token: string | null) => void
 }
 
-/** Widget Cloudflare Turnstile (anti-spam). Eșecul lui nu blochează fluxul WhatsApp. */
-export default function TurnstileWidget({ onToken }: Props) {
+/** Widget Cloudflare Turnstile (anti-spam), partajat între site și panoul de admin. */
+export default function TurnstileWidget({
+  sitekey = '1x00000000000000000000AA',
+  onToken,
+}: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const onTokenRef = useRef(onToken)
   onTokenRef.current = onToken
@@ -46,7 +50,7 @@ export default function TurnstileWidget({ onToken }: Props) {
       .then(() => {
         if (cancelled || !containerRef.current || !window.turnstile) return
         widgetId = window.turnstile.render(containerRef.current, {
-          sitekey: TURNSTILE_SITE_KEY,
+          sitekey,
           language: 'ro',
           appearance: 'always',
           callback: (token: string) => onTokenRef.current(token),

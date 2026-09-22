@@ -9,6 +9,7 @@ import InboxPage from './pages/InboxPage'
 import RequestDetailPage from './pages/RequestDetailPage'
 import CardsPage from './pages/CardsPage'
 import UsersPage from './pages/UsersPage'
+import SettingsPage from './pages/SettingsPage'
 
 /** Utilizatorii veniți dintr-un link de invitație/resetare își setează întâi parola. */
 function PasswordSetupGate({ children }: { children: ReactNode }) {
@@ -45,6 +46,7 @@ export default function App() {
             <Route path="/" element={<InboxPage />} />
             <Route path="/cereri/:id" element={<RequestDetailPage />} />
             <Route path="/carduri" element={<CardsPage />} />
+            <Route path="/setari" element={<SettingsPage />} />
             <Route
               path="/utilizatori"
               element={

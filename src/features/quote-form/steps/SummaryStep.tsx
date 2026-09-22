@@ -3,9 +3,9 @@ import { INSURANCE_TYPES, REFERRAL_SOURCES } from '../config'
 import { useQuoteForm } from '../QuoteFormContext'
 import { buildWhatsAppLink, buildEmailLink } from '../buildMessage'
 import { submitRequest, generateShortId } from '../submitRequest'
-import { backendEnabled } from '../../../lib/backend'
+import { backendEnabled, TURNSTILE_SITE_KEY } from '../../../lib/backend'
 import { Button } from '../../../components/ui/Button'
-import TurnstileWidget from '../../../components/TurnstileWidget'
+import TurnstileWidget from '@shared/TurnstileWidget'
 import { BRAND } from '../../../lib/constants'
 
 export default function SummaryStep() {
@@ -103,7 +103,7 @@ export default function SummaryStep() {
 
       {backendEnabled && (
         <div className="mt-4 flex justify-center">
-          <TurnstileWidget onToken={setTurnstileToken} />
+          <TurnstileWidget sitekey={TURNSTILE_SITE_KEY} onToken={setTurnstileToken} />
         </div>
       )}
 

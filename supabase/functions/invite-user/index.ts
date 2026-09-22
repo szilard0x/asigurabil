@@ -1,7 +1,13 @@
-// Administrare utilizatori — doar pentru admin: invită un broker/admin nou prin
-// email sau dezactivează/reactivează un cont existent.
+// Administrare utilizatori — doar pentru admin. Conturile sunt pe TELEFON:
+//  - invite: creează contul după nume + telefon și trimite pe WhatsApp linkul
+//    de setare a parolei
+//  - temp-password: setează o parolă temporară (plasă de siguranță dacă
+//    WhatsApp nu funcționează)
+//  - deactivate / reactivate: blochează/deblochează contul
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { corsHeaders, json } from '../_shared/cors.ts'
+import { normalizeRoPhone, phoneToSyntheticEmail } from '../_shared/phone.ts'
+import { sendWhatsApp } from '../_shared/whatsapp.ts'
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
@@ -28,25 +34,61 @@ Deno.serve(async (req) => {
   if (profile?.role !== 'admin') return json({ error: 'forbidden' }, 403)
 
   // 2. Execută acțiunea
-  let body: { action?: string; email?: string; fullName?: string; role?: string; userId?: string }
+  let body: {
+    action?: string
+    phone?: string
+    fullName?: string
+    role?: string
+    userId?: string
+    password?: string
+  }
   try {
     body = await req.json()
   } catch {
     return json({ error: 'invalid_body' }, 400)
   }
 
+  const adminUrl = Deno.env.get('ADMIN_URL') ?? 'http://localhost:5174'
+
   if (body.action === 'invite') {
-    const email = String(body.email ?? '').trim().toLowerCase()
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error: 'invalid_email' }, 400)
+    const phone = normalizeRoPhone(String(body.phone ?? ''))
+    if (!phone) return json({ error: 'invalid_phone' }, 400)
+    const fullName = String(body.fullName ?? '').slice(0, 200).trim()
+    if (fullName.length < 2) return json({ error: 'invalid_name' }, 400)
     const role = body.role === 'admin' ? 'admin' : 'broker'
-    const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-      data: { role, full_name: String(body.fullName ?? '').slice(0, 200) },
+    const email = phoneToSyntheticEmail(phone)
+
+    const { data: link, error } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'invite',
+      email,
+      options: {
+        data: { role, full_name: fullName, phone },
+        redirectTo: adminUrl,
+      },
     })
-    if (error) {
+    if (error || !link.properties?.action_link) {
       console.error('invite failed', error)
-      return json({ error: 'invite_failed', message: error.message }, 400)
+      return json({ error: 'invite_failed', message: error?.message ?? 'no link' }, 400)
     }
-    return json({ ok: true, userId: data.user?.id })
+
+    const sent = await sendWhatsApp(
+      supabaseAdmin,
+      phone,
+      'invite',
+      `Bună, ${fullName}! Ai fost invitat(ă) în echipa asigurabil.ro. ` +
+        `Deschide linkul ca să îți setezi parola:\n${link.properties.action_link}`,
+    )
+    return json({ ok: true, userId: link.user?.id, whatsappSent: sent })
+  }
+
+  if (body.action === 'temp-password') {
+    const userId = String(body.userId ?? '')
+    const password = String(body.password ?? '')
+    if (!userId) return json({ error: 'missing_user_id' }, 400)
+    if (password.length < 8) return json({ error: 'password_too_short' }, 400)
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, { password })
+    if (error) return json({ error: 'update_failed', message: error.message }, 400)
+    return json({ ok: true })
   }
 
   if (body.action === 'deactivate' || body.action === 'reactivate') {

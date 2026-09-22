@@ -172,10 +172,11 @@ export const REFERRAL_SOURCES: ReferralSource[] = [
 
 /** Stările unei cereri în panoul de administrare (oglindesc enum-ul din Postgres). */
 export const REQUEST_STATUSES = [
-  { id: 'nou', label: 'Nou', color: '#F59E0B' },
-  { id: 'contactat', label: 'Contactat', color: '#3B82F6' },
-  { id: 'ofertat', label: 'Ofertat', color: '#8B5CF6' },
-  { id: 'inchis', label: 'Închis', color: '#6B7280' },
+  { id: 'nou', label: 'Nou', color: '#F59E0B', final: false },
+  { id: 'contactat', label: 'Contactat', color: '#3B82F6', final: false },
+  { id: 'ofertat', label: 'Ofertat', color: '#8B5CF6', final: false },
+  { id: 'castigat', label: 'Câștigat', color: '#16A34A', final: true },
+  { id: 'pierdut', label: 'Pierdut', color: '#6B7280', final: true },
 ] as const
 
 export type RequestStatus = (typeof REQUEST_STATUSES)[number]['id']

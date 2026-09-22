@@ -97,3 +97,41 @@ Proposed architecture (stays on the existing free Cloudflare stack):
 
 1–5 in one pass (small, all verifiable in the browser) → 6 (checkbox + policy page) →
 7 as its own milestone once he confirms the open questions.
+
+---
+
+# v2 roadmap (deferred by decision, 2026-09-22)
+
+Implemented in v1 on top of item 7: phone+password auth (no email anywhere), invites &
+password resets delivered on WhatsApp (Twilio driver; mock driver locally), daily WhatsApp
+digest of neglected requests (pg_cron), notification settings page, admin temp-password
+break-glass, `câștigat`/`pierdut` status split.
+
+Deferred to v2 (when Sergiu has a proper business number / more brokers):
+- **Instant WhatsApp message on each new request** (setting already exists in UI, tagged
+  "în curând"; wire a DB webhook → send function)
+- **Referral links per broker** (`asigurabil.ro/b/COD`): client's WhatsApp message goes to
+  the attributed broker's number, request auto-assigned, QR + personalized marketing cards
+  in the generator
+- **Broker performance page** (admin): requests per status per broker, conversion, per
+  referral code
+- **Migration Twilio → Meta Cloud API** (new driver in `_shared/whatsapp.ts` only)
+- Assignment notification ("ți s-a asignat cererea #X") when admin assigns a broker
+
+## Questions for Sergiu (asked/pending — answers may reshape v2)
+
+1. **Business WhatsApp number**: when you're ready, we need a dedicated number for system
+   messages (the API number can't be used in the normal WhatsApp app). Cheap prepaid SIM or
+   virtual number — who buys it, and under the II's Meta business profile?
+2. **Client-facing number**: today clients' WhatsApp messages go to your personal number.
+   Keep it that way when brokers join (each broker's personal number via their referral
+   link), or route everything through one central number?
+3. **Organic requests when there are several brokers**: all to you with manual assignment
+   (current), or automatic round-robin?
+4. **Data retention**: how long should requests + uploaded documents be kept? (Privacy
+   policy promises deletion on request; an auto-purge rule needs a number of months.)
+5. **Assigned-request visibility**: may every broker see all requests (current), or should
+   brokers only see their own? (Matters once non-family brokers join.)
+6. **Digest contents**: currently "new + unchanged for N days, excluding won/lost". Should
+   'ofertat' requests older than X days get a separate nudge ("clientul nu a răspuns")?
+7. **Who can invite**: only admin (current) — OK long-term?

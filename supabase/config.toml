@@ -421,3 +421,11 @@ verify_jwt = false
 # Administrare utilizatori — necesită JWT valid (rolul de admin e verificat în funcție).
 [functions.invite-user]
 verify_jwt = true
+
+# „Am uitat parola" — publică (protejată de Turnstile).
+[functions.reset-password]
+verify_jwt = false
+
+# Digestul zilnic — apelată de cron (secret propriu) sau de admin (JWT).
+[functions.send-digest]
+verify_jwt = false

@@ -96,7 +96,7 @@ export default function InboxPage() {
       <h1 className="font-display font-bold text-navy text-2xl mb-6">Cereri de ofertă</h1>
 
       {/* statistici rapide */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-[repeat(4,1fr)_1.6fr] gap-3 mb-7">
+      <div className="grid sm:grid-cols-3 lg:grid-cols-[repeat(5,1fr)_1.8fr] gap-3 mb-7">
         {REQUEST_STATUSES.map((s) => (
           <button
             key={s.id}

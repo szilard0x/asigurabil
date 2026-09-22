@@ -7,7 +7,7 @@ const PURPOSE_LABELS: Record<string, string> = {
   invite: 'Invitație',
   reset: 'Resetare parolă',
   temp_password: 'Parolă temporară',
-  digest: 'Digest zilnic',
+  digest: 'Raport zilnic',
 }
 
 /** Transformă linkurile din corpul mesajului în ancore clickabile (utile local, cu driverul mock). */

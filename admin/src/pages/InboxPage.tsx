@@ -173,6 +173,11 @@ export default function InboxPage() {
                 <span className="min-w-0 flex-1">
                   <b className="block font-display text-navy text-[14.5px] truncate">
                     {r.name} · {type?.label ?? r.type_id}
+                    {r.assigned_to === null && (
+                      <span className="ml-2 align-middle text-[10px] font-bold text-amber border border-amber/50 rounded-full px-1.5 py-0.5 uppercase">
+                        de asignat
+                      </span>
+                    )}
                   </b>
                   <span className="text-muted text-[12.5px]">
                     {r.phone}

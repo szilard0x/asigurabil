@@ -184,15 +184,15 @@ create policy "profiles_select_own_or_admin" on public.profiles
   for select to authenticated
   using (id = auth.uid() or public.is_admin());
 
--- requests: orice broker autentificat vede tot și poate actualiza
--- status / notes / assigned_to; doar adminul poate șterge.
-create policy "requests_select_authenticated" on public.requests
+-- requests: brokerii văd DOAR cererile care le sunt asignate; adminul vede tot
+-- (cererile intră neasignate și adminul le distribuie). Doar adminul poate șterge.
+create policy "requests_select_assigned_or_admin" on public.requests
   for select to authenticated
-  using (true);
+  using (assigned_to = auth.uid() or public.is_admin());
 
-create policy "requests_update_authenticated" on public.requests
+create policy "requests_update_assigned_or_admin" on public.requests
   for update to authenticated
-  using (true)
+  using (assigned_to = auth.uid() or public.is_admin())
   with check (true);
 
 create policy "requests_delete_admin" on public.requests
@@ -217,6 +217,10 @@ begin
     new.gdpr_consent := old.gdpr_consent;
     new.short_id := old.short_id;
     new.created_at := old.created_at;
+    -- doar adminul poate schimba responsabilul
+    if not public.is_admin() then
+      new.assigned_to := old.assigned_to;
+    end if;
   end if;
   return new;
 end;
@@ -226,10 +230,16 @@ create trigger requests_guard_update
   before update on public.requests
   for each row execute function public.guard_request_update();
 
--- request_files: doar citire pentru brokeri; scrierea vine din Edge Functions.
-create policy "request_files_select_authenticated" on public.request_files
+-- request_files: vizibile doar dacă vezi cererea; scrierea vine din Edge Functions.
+create policy "request_files_select_visible_request" on public.request_files
   for select to authenticated
-  using (true);
+  using (
+    exists (
+      select 1 from public.requests r
+      where r.id = request_id
+        and (r.assigned_to = auth.uid() or public.is_admin())
+    )
+  );
 
 create policy "request_files_delete_admin" on public.request_files
   for delete to authenticated
@@ -303,7 +313,15 @@ values (
 )
 on conflict (id) do nothing;
 
--- Brokerii autentificați pot citi fișierele; upload-ul se face doar cu service role.
+-- Fișierele din storage urmează aceeași regulă de vizibilitate ca cererea
+-- (calea e requests/<request_id>/<fișier>); upload-ul se face doar cu service role.
 create policy "request_files_storage_read" on storage.objects
   for select to authenticated
-  using (bucket_id = 'request-files');
+  using (
+    bucket_id = 'request-files'
+    and exists (
+      select 1 from public.requests r
+      where r.id::text = (storage.foldername(name))[2]
+        and (r.assigned_to = auth.uid() or public.is_admin())
+    )
+  );

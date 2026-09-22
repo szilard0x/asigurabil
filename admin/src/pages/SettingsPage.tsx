@@ -45,7 +45,7 @@ export default function SettingsPage() {
       return
     }
     setTestResult(
-      'Digestul a fost generat — vezi jurnalul de mesaje din pagina Utilizatori (local nu pleacă pe WhatsApp).',
+      'Raportul a fost generat — vezi jurnalul de mesaje din pagina Utilizatori (local nu pleacă pe WhatsApp).',
     )
   }
 
@@ -69,7 +69,7 @@ export default function SettingsPage() {
         <div className={rowCls}>
           <div>
             <b className="block font-display text-navy text-[14.5px]">
-              Digest zilnic cu cererile nelucrate
+              Raport zilnic cu cererile nelucrate
             </b>
             <span className="text-muted text-[12.5px]">
               Un mesaj pe zi cu cererile noi și cele neschimbate de prea mult timp.
@@ -83,7 +83,7 @@ export default function SettingsPage() {
           />
         </div>
         <div className={rowCls}>
-          <span className="text-[14px] text-ink">Ora digestului</span>
+          <span className="text-[14px] text-ink">Ora raportului</span>
           <select
             value={settings.digest_hour}
             onChange={(e) => patch({ digest_hour: Number(e.target.value) })}
@@ -121,7 +121,7 @@ export default function SettingsPage() {
             disabled={busy}
             className="bg-navy text-white font-display font-semibold text-sm rounded-xl px-5 py-2.5 cursor-pointer hover:-translate-y-0.5 transition-transform disabled:opacity-50"
           >
-            {busy ? 'Se trimite…' : 'Trimite digestul acum (test)'}
+            {busy ? 'Se trimite…' : 'Trimite raportul acum (test)'}
           </button>
           {testResult && <p className="text-muted text-[13px] mt-2">{testResult}</p>}
         </div>

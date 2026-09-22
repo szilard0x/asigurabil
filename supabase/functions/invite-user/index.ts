@@ -86,7 +86,12 @@ Deno.serve(async (req) => {
     const password = String(body.password ?? '')
     if (!userId) return json({ error: 'missing_user_id' }, 400)
     if (password.length < 8) return json({ error: 'password_too_short' }, 400)
-    const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, { password })
+    // email_confirm: contul devine utilizabil chiar dacă invitatul nu a apucat
+    // să deschidă linkul de invitație (exact rolul parolei temporare)
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+      password,
+      email_confirm: true,
+    })
     if (error) return json({ error: 'update_failed', message: error.message }, 400)
     return json({ ok: true })
   }

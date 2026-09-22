@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { INSURANCE_TYPES, REFERRAL_SOURCES, REQUEST_STATUSES } from '@shared/insurance'
+import { useAuth } from '../lib/auth'
 import {
   supabase,
   type Profile,
@@ -20,6 +21,8 @@ function clientWhatsAppUrl(phone: string, text: string): string {
 
 export default function RequestDetailPage() {
   const { id } = useParams<{ id: string }>()
+  const { profile } = useAuth()
+  const isAdmin = profile?.role === 'admin'
   const [request, setRequest] = useState<RequestRow | null>(null)
   const [files, setFiles] = useState<RequestFileRow[]>([])
   const [team, setTeam] = useState<Profile[]>([])
@@ -140,32 +143,44 @@ export default function RequestDetailPage() {
         </div>
       </div>
 
-      {/* stare + asignare */}
-      <div className="flex flex-wrap items-center gap-3 mb-6">
-        <select
-          value={request.status}
-          onChange={(e) => patch({ status: e.target.value as RequestRow['status'] })}
-          className={inputCls}
-        >
-          {REQUEST_STATUSES.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.label}
-            </option>
-          ))}
-        </select>
-        <select
-          value={request.assigned_to ?? ''}
-          onChange={(e) => patch({ assigned_to: e.target.value || null })}
-          className={inputCls}
-        >
-          <option value="">Neasignată</option>
-          {team.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.full_name || p.email}
-            </option>
-          ))}
-        </select>
-        {saved && <span className="text-green-700 text-sm">✓ Salvat</span>}
+      {/* stare + responsabil */}
+      <div className="flex flex-wrap items-end gap-4 mb-6">
+        <div>
+          <label className="block font-display font-semibold text-navy text-[12px] mb-1">
+            Stare
+          </label>
+          <select
+            value={request.status}
+            onChange={(e) => patch({ status: e.target.value as RequestRow['status'] })}
+            className={inputCls}
+          >
+            {REQUEST_STATUSES.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        {isAdmin && (
+          <div>
+            <label className="block font-display font-semibold text-navy text-[12px] mb-1">
+              Responsabil
+            </label>
+            <select
+              value={request.assigned_to ?? ''}
+              onChange={(e) => patch({ assigned_to: e.target.value || null })}
+              className={inputCls}
+            >
+              <option value="">Neasignată — o vede doar adminul</option>
+              {team.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.full_name || p.email}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+        {saved && <span className="text-green-700 text-sm pb-2.5">✓ Salvat</span>}
       </div>
 
       {/* datele cererii */}

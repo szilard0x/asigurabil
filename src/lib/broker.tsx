@@ -12,7 +12,6 @@ import { displayRoPhone } from '@shared/phone'
 import { SUPABASE_URL, SUPABASE_ANON_KEY, backendEnabled } from './backend'
 
 const STORAGE_KEY = 'asigurabil-broker'
-const REFRESH_MS = 24 * 3600 * 1000
 
 interface StoredBroker {
   code: string
@@ -47,58 +46,64 @@ function readStored(): StoredBroker | null {
   }
 }
 
-async function fetchBroker(code: string): Promise<StoredBroker | null> {
-  if (!backendEnabled) return null
+type FetchResult =
+  | { status: 'ok'; broker: StoredBroker }
+  /** brokerul nu (mai) există sau e dezactivat — atribuirea trebuie ștearsă */
+  | { status: 'gone' }
+  /** eroare de rețea/temporară — păstrăm ce avem în cache */
+  | { status: 'error' }
+
+async function fetchBroker(code: string): Promise<FetchResult> {
+  if (!backendEnabled) return { status: 'error' }
   try {
     const res = await fetch(`${SUPABASE_URL}/functions/v1/broker-info?code=${encodeURIComponent(code)}`, {
       headers: { apikey: SUPABASE_ANON_KEY! },
     })
-    if (!res.ok) return null
+    if (res.status === 404 || res.status === 400) return { status: 'gone' }
+    if (!res.ok) return { status: 'error' }
     const data = await res.json()
-    if (!data.phone) return null
-    return { code, name: data.name ?? null, phone: String(data.phone), fetchedAt: Date.now() }
+    if (!data.phone) return { status: 'gone' }
+    return {
+      status: 'ok',
+      broker: { code, name: data.name ?? null, phone: String(data.phone), fetchedAt: Date.now() },
+    }
   } catch {
-    return null
+    return { status: 'error' }
   }
 }
 
 export function BrokerProvider({ children }: { children: ReactNode }) {
   const [broker, setBroker] = useState<StoredBroker | null>(readStored)
 
+  const save = (b: StoredBroker | null) => {
+    setBroker(b)
+    try {
+      if (b) localStorage.setItem(STORAGE_KEY, JSON.stringify(b))
+      else localStorage.removeItem(STORAGE_KEY)
+    } catch {
+      /* best-effort */
+    }
+  }
+
   const setCode = (rawCode: string) => {
     const code = rawCode.toUpperCase()
     if (!/^[A-Z0-9]{4,12}$/.test(code)) return
-    fetchBroker(code).then((b) => {
-      if (!b) return // cod invalid/dezactivat — rămânem pe implicit
-      setBroker(b)
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(b))
-      } catch {
-        /* best-effort */
-      }
+    fetchBroker(code).then((result) => {
+      if (result.status === 'ok') save(result.broker)
+      // un cod dispărut șterge și atribuirea veche, dacă era pentru același broker
+      else if (result.status === 'gone' && readStored()?.code === code) save(null)
     })
   }
 
-  // reîmprospătăm periodic datele (brokerul poate fi dezactivat între timp)
+  // La FIECARE încărcare validăm brokerul din cache (poate fi șters/dezactivat
+  // între timp); cache-ul rămâne pentru afișare instantanee, dar un răspuns
+  // „gone" îl elimină imediat. Erorile de rețea nu strică atribuirea.
   useEffect(() => {
     const stored = readStored()
-    if (!stored || Date.now() - stored.fetchedAt < REFRESH_MS) return
-    fetchBroker(stored.code).then((b) => {
-      if (b) {
-        setBroker(b)
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(b))
-        } catch {
-          /* best-effort */
-        }
-      } else {
-        setBroker(null)
-        try {
-          localStorage.removeItem(STORAGE_KEY)
-        } catch {
-          /* best-effort */
-        }
-      }
+    if (!stored) return
+    fetchBroker(stored.code).then((result) => {
+      if (result.status === 'ok') save(result.broker)
+      else if (result.status === 'gone') save(null)
     })
   }, [])
 

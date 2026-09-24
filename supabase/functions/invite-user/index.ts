@@ -72,9 +72,12 @@ Deno.serve(async (req) => {
       return json({ error: 'invite_failed', message: error?.message ?? 'no link' }, 400)
     }
 
+    // linkul de verificare e de unică folosință — îl împachetăm în pagina
+    // /activare (în fragment), ca să nu-l consume crawlerele de previzualizare
+    const activationUrl = `${adminUrl}/activare#${encodeURIComponent(link.properties.action_link)}`
     const waBody =
       `Bună, ${fullName}! Ai fost invitat(ă) în echipa asigurabil.ro. ` +
-      `Deschide linkul ca să îți setezi parola:\n${link.properties.action_link}`
+      `Deschide linkul ca să îți setezi parola:\n${activationUrl}`
     const sent = await sendWhatsApp(supabaseAdmin, phone, 'invite', waBody)
     await logActivity(
       supabaseAdmin,

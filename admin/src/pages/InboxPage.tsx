@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { INSURANCE_TYPES, REFERRAL_SOURCES, REQUEST_STATUSES } from '@shared/insurance'
 import { supabase, type RequestRow } from '../lib/supabase'
+import { useAuth } from '../lib/auth'
 
 function StatusBadge({ status }: { status: RequestRow['status'] }) {
   const s = REQUEST_STATUSES.find((x) => x.id === status)
@@ -25,6 +26,7 @@ function timeAgo(iso: string): string {
 }
 
 export default function InboxPage() {
+  const { profile } = useAuth()
   const [requests, setRequests] = useState<RequestRow[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<string>('')
@@ -154,8 +156,12 @@ export default function InboxPage() {
       {loading ? (
         <p className="text-muted text-sm py-10 text-center">Se încarcă…</p>
       ) : filtered.length === 0 ? (
-        <p className="text-muted text-sm py-10 text-center">
-          Nicio cerere{requests.length > 0 ? ' care să corespundă filtrelor' : ' încă'}.
+        <p className="text-muted text-sm py-10 text-center max-w-md mx-auto">
+          {requests.length > 0
+            ? 'Nicio cerere care să corespundă filtrelor.'
+            : profile?.role === 'broker'
+              ? 'Nu ai încă nicio cerere. Aici apar doar cererile repartizate ție de admin sau venite prin linkul tău de recomandare — cele nerepartizate le vede doar adminul.'
+              : 'Nicio cerere încă.'}
         </p>
       ) : (
         <div className="bg-white border border-line rounded-2xl divide-y divide-line overflow-hidden">

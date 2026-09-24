@@ -67,10 +67,13 @@ Deno.serve(async (req) => {
     return generic
   }
 
+  // împachetat în /activare (fragment) ca să nu fie consumat de crawlerele
+  // de previzualizare din WhatsApp — linkul de verificare e de unică folosință
+  const activationUrl = `${adminUrl}/activare#${encodeURIComponent(link.properties.action_link)}`
   const waBody =
     `Bună${profile.full_name ? `, ${profile.full_name}` : ''}! Ai cerut resetarea parolei ` +
     `pentru panoul asigurabil.ro. Deschide linkul ca să setezi o parolă nouă:\n` +
-    `${link.properties.action_link}\n\nDacă nu ai fost tu, ignoră acest mesaj.`
+    `${activationUrl}\n\nDacă nu ai fost tu, ignoră acest mesaj.`
   const sent = await sendWhatsApp(supabaseAdmin, phone, 'reset', waBody)
   await logActivity(
     supabaseAdmin,

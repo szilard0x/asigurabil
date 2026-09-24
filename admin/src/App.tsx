@@ -4,6 +4,7 @@ import { AuthProvider, RequireAuth, RequireAdmin } from './lib/auth'
 import { needsPasswordSetup } from './lib/inviteFlag'
 import Layout from './components/Layout'
 import LoginPage from './pages/LoginPage'
+import ActivatePage from './pages/ActivatePage'
 import SetPasswordPage from './pages/SetPasswordPage'
 import InboxPage from './pages/InboxPage'
 import RequestDetailPage from './pages/RequestDetailPage'
@@ -27,6 +28,7 @@ export default function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/activare" element={<ActivatePage />} />
           <Route
             path="/setare-parola"
             element={

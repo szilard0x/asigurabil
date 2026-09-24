@@ -1,6 +1,7 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
 import Logo from '@shared/Logo'
+import { consumeAuthLinkError } from '../lib/inviteFlag'
 import TurnstileWidget from '@shared/TurnstileWidget'
 import { normalizeRoPhone, phoneToSyntheticEmail } from '@shared/phone'
 import { supabase } from '../lib/supabase'
@@ -18,6 +19,15 @@ export default function LoginPage() {
   const [busy, setBusy] = useState(false)
   const [forgotMode, setForgotMode] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+
+  // linkul de invitație/resetare a fost deja folosit sau a expirat
+  useEffect(() => {
+    if (consumeAuthLinkError()) {
+      setError(
+        'Linkul de activare a expirat sau a fost deja folosit. Cere o invitație nouă sau folosește „Am uitat parola".',
+      )
+    }
+  }, [])
 
   if (!loading && session) return <Navigate to="/" replace />
 

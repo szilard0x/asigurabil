@@ -74,7 +74,10 @@ Deno.serve(async (req) => {
     `Bună${profile.full_name ? `, ${profile.full_name}` : ''}! Ai cerut resetarea parolei ` +
     `pentru panoul asigurabil.ro. Deschide linkul ca să setezi o parolă nouă:\n` +
     `${activationUrl}\n\nDacă nu ai fost tu, ignoră acest mesaj.`
-  const sent = await sendWhatsApp(supabaseAdmin, phone, 'reset', waBody)
+  const sent = await sendWhatsApp(supabaseAdmin, phone, 'reset', waBody, {
+    '1': profile.full_name ?? `0${phone.slice(2)}`,
+    '2': activationUrl,
+  })
   await logActivity(
     supabaseAdmin,
     'password_reset',

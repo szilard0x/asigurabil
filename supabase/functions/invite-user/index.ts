@@ -78,7 +78,10 @@ Deno.serve(async (req) => {
     const waBody =
       `Bună, ${fullName}! Ai fost invitat(ă) în echipa asigurabil.ro. ` +
       `Deschide linkul ca să îți setezi parola:\n${activationUrl}`
-    const sent = await sendWhatsApp(supabaseAdmin, phone, 'invite', waBody)
+    const sent = await sendWhatsApp(supabaseAdmin, phone, 'invite', waBody, {
+      '1': fullName,
+      '2': activationUrl,
+    })
     await logActivity(
       supabaseAdmin,
       'user_invited',

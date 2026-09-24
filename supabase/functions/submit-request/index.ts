@@ -189,15 +189,24 @@ Deno.serve(async (req) => {
       const p = r.profiles as unknown as { phone: string | null; role: string; disabled: boolean }
       if (!p.phone || p.disabled) continue
       if (p.role !== 'admin' && r.profile_id !== assignedTo) continue
+      const clientLine =
+        phone + (payload.city ? ` · ${String(payload.city).slice(0, 100)}` : '')
+      const typeLine =
+        TYPE_LABELS[typeId] + (files.length ? ` (${files.length} documente atașate)` : '')
       await sendWhatsApp(
         supabase,
         p.phone,
         'new_request',
-        `🔔 Cerere nouă #${request.short_id}: ${name} — ${TYPE_LABELS[typeId]}` +
-          (files.length ? ` (${files.length} documente atașate)` : '') +
-          `\n📞 Client: ${phone}` +
-          (payload.city ? ` · ${String(payload.city).slice(0, 100)}` : '') +
+        `🔔 Cerere nouă #${request.short_id}: ${name} — ${typeLine}` +
+          `\n📞 Client: ${clientLine}` +
           `\nDeschide: ${adminUrl}/cereri/${request.id}`,
+        {
+          '1': request.short_id,
+          '2': name,
+          '3': typeLine,
+          '4': clientLine,
+          '5': `${adminUrl}/cereri/${request.id}`,
+        },
       )
     }
   } catch (err) {

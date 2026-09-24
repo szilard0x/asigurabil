@@ -126,10 +126,15 @@ Deno.serve(async (req) => {
           timeZone: 'Europe/Bucharest',
         })})`,
     )
+    const panelUrl = Deno.env.get('ADMIN_URL') ?? 'http://localhost:5174'
     const waBody =
       `📋 asigurabil.ro — ${stale.length} cereri care așteaptă:\n${lines.join('\n')}\n\n` +
-      `Deschide panoul: ${Deno.env.get('ADMIN_URL') ?? 'http://localhost:5174'}`
-    const ok = await sendWhatsApp(supabaseAdmin, p.phone, 'digest', waBody)
+      `Deschide panoul: ${panelUrl}`
+    const ok = await sendWhatsApp(supabaseAdmin, p.phone, 'digest', waBody, {
+      '1': String(stale.length),
+      '2': lines.join(' · '),
+      '3': panelUrl,
+    })
     await logActivity(
       supabaseAdmin,
       'report_sent',

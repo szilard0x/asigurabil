@@ -46,8 +46,8 @@ export default function ContactStep() {
     <div>
       <h3 className="font-display font-bold text-navy text-2xl mb-1.5">Cum te putem contacta?</h3>
       <p className="text-muted text-sm mb-7">
-        Datele tale ajung doar la echipa asigurabil.ro, pe WhatsApp — nu într-o bază de date de
-        marketing.
+        Datele tale ajung doar la echipa asigurabil.ro — te contactăm pe WhatsApp sau telefon, nu
+        intri în nicio bază de date de marketing.
       </p>
 
       <div className="flex flex-col gap-4">

@@ -27,7 +27,7 @@ export interface NotificationSettings {
   instant_new_request: boolean
   daily_digest: boolean
   digest_hour: number
-  stale_days: number
+  stale_hours: number
   last_digest_at: string | null
   updated_at: string
 }

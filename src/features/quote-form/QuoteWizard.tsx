@@ -43,7 +43,7 @@ export default function QuoteWizard() {
           center
           label="Cere ofertă"
           title="Spune-ne ce ai nevoie — durează sub un minut"
-          lead="La final, mesajul pleacă direct pe WhatsApp către echipa noastră. Vezi exact ce trimiți și primești răspuns rapid, de la un om, nu de la un robot."
+          lead="Trimiți cererea direct de aici, iar echipa noastră te contactează pe WhatsApp sau telefon — rapid, de la un om, nu de la un robot."
         />
         <div className="max-w-2xl mx-auto mt-10 bg-off rounded-3xl shadow-card p-6 sm:p-10 overflow-hidden">
           {step !== 'done' && (

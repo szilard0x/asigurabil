@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { INSURANCE_TYPES, REFERRAL_SOURCES } from '../config'
 import { useQuoteForm } from '../QuoteFormContext'
-import { buildWhatsAppLink, buildEmailLink } from '../buildMessage'
+import { buildWhatsAppLink } from '../buildMessage'
 import { submitRequest, generateShortId } from '../submitRequest'
 import { backendEnabled, TURNSTILE_SITE_KEY } from '../../../lib/backend'
 import { Button } from '../../../components/ui/Button'
@@ -11,6 +11,8 @@ import { useBroker } from '../../../lib/broker'
 export default function SummaryStep() {
   const { data, update, next, back, goTo, files, setSentShortId } = useQuoteForm()
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [sending, setSending] = useState(false)
+  const [sendError, setSendError] = useState(false)
   const contact = useBroker()
   const type = INSURANCE_TYPES.find((t) => t.id === data.typeId)
   const referral = REFERRAL_SOURCES.find((r) => r.id === data.referralId)
@@ -42,26 +44,36 @@ export default function SummaryStep() {
       : []),
   ]
 
-  const openWhatsApp = () => {
-    const shortId = generateShortId()
-    const canSubmit = backendEnabled && turnstileToken !== null
-    // Arhivarea în panou pornește în paralel; eșecul ei nu blochează WhatsApp-ul.
-    if (canSubmit) {
-      setSentShortId(shortId)
-      void submitRequest(data, files, turnstileToken, shortId, contact.code)
+  // Cererea se trimite direct din site; echipa e notificată automat pe WhatsApp.
+  const submit = async () => {
+    if (sending) return
+    setSendError(false)
+    if (!backendEnabled || !turnstileToken) {
+      // fără verificare anti-spam nu putem trimite — arătăm alternativele
+      setSendError(true)
+      return
     }
-    const meta = canSubmit ? { shortId, fileCount: files.length } : {}
-    // mesajul merge la brokerul din linkul de recomandare (sau la numărul implicit)
-    window.open(buildWhatsAppLink(data, meta, contact.phoneWhatsApp), '_blank', 'noopener')
+    setSending(true)
+    const shortId = generateShortId()
+    const ok = await submitRequest(data, files, turnstileToken, shortId, contact.code)
+    setSending(false)
+    if (!ok) {
+      setSendError(true)
+      return
+    }
+    setSentShortId(shortId)
     next() // → ecranul de confirmare
   }
+
+  // Plan B dacă trimiterea eșuează: același conținut, pe WhatsApp, ca înainte.
+  const fallbackWhatsApp = buildWhatsAppLink(data, { fileCount: files.length }, contact.phoneWhatsApp)
 
   return (
     <div>
       <h3 className="font-display font-bold text-navy text-2xl mb-1.5">Verifică și trimite</h3>
       <p className="text-muted text-sm mb-7">
-        Așa arată cererea ta. Butonul de mai jos deschide WhatsApp cu mesajul pregătit — îl vezi și
-        îl trimiți chiar tu.
+        Așa arată cererea ta. O trimiți direct de aici, iar echipa noastră te contactează pe
+        WhatsApp sau telefon.
       </p>
 
       <div className="bg-white border border-line rounded-2xl divide-y divide-line overflow-hidden">
@@ -110,16 +122,32 @@ export default function SummaryStep() {
       )}
 
       <div className="mt-5 flex flex-col items-stretch gap-3">
-        <Button onClick={openWhatsApp} disabled={!data.gdprConsent} className="w-full">
-          Asigură-te — trimite pe WhatsApp 💬
+        <Button onClick={submit} disabled={!data.gdprConsent || sending} className="w-full">
+          {sending ? 'Se trimite…' : 'Asigură-te — trimite cererea ✓'}
         </Button>
-        <div className="flex items-center justify-center gap-5 text-[13px] text-muted">
-          <a href={buildEmailLink(data)} className="hover:text-navy underline underline-offset-2">
-            Nu ai WhatsApp? Trimite prin email
-          </a>
-          <span aria-hidden>·</span>
+        {sendError && (
+          <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-[13.5px] text-red-700 text-center">
+            Nu am putut trimite cererea. Mai încearcă o dată, sau trimite-ne-o direct:{' '}
+            <a
+              href={fallbackWhatsApp}
+              target="_blank"
+              rel="noopener"
+              className="font-semibold underline underline-offset-2"
+            >
+              pe WhatsApp
+            </a>{' '}
+            ·{' '}
+            <a
+              href={`tel:${contact.phoneTel}`}
+              className="font-semibold underline underline-offset-2"
+            >
+              {contact.phoneDisplay}
+            </a>
+          </div>
+        )}
+        <div className="flex items-center justify-center text-[13px] text-muted">
           <a href={`tel:${contact.phoneTel}`} className="hover:text-navy underline underline-offset-2">
-            Sună direct: {contact.phoneDisplay}
+            Preferi să vorbim direct? Sună: {contact.phoneDisplay}
           </a>
         </div>
       </div>

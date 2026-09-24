@@ -115,8 +115,8 @@ export default function SettingsPage() {
               Mesaj instant la fiecare cerere nouă
             </b>
             <span className="text-muted text-[12.5px]">
-              Util dacă clientul nu apucă să trimită mesajul WhatsApp — cererea ar rămâne doar în
-              panou. Brokerii primesc doar cererile venite prin linkul lor.
+              Așa afli de cererile noi — clienții trimit formularul direct din site. Brokerii
+              primesc doar cererile venite prin linkul lor. Recomandat: pornit.
             </span>
           </div>
           <input
@@ -161,13 +161,13 @@ export default function SettingsPage() {
             O cerere e „uitată" dacă nu s-a schimbat de…
           </span>
           <select
-            value={settings.stale_days}
-            onChange={(e) => patch({ stale_days: Number(e.target.value) })}
+            value={settings.stale_hours}
+            onChange={(e) => patch({ stale_hours: Number(e.target.value) })}
             className={selectCls}
           >
-            {[1, 2, 3, 5, 7, 14].map((d) => (
-              <option key={d} value={d}>
-                {d === 1 ? 'o zi' : `${d} zile`}
+            {[1, 2, 4, 6, 12, 24, 48, 72].map((h) => (
+              <option key={h} value={h}>
+                {h === 1 ? 'o oră' : h < 20 ? `${h} ore` : `${h} de ore`}
               </option>
             ))}
           </select>

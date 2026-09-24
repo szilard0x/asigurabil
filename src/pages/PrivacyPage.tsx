@@ -79,11 +79,11 @@ export default function PrivacyPage() {
 
         <Section title="Unde ajung datele tale">
           <p>
-            Mesajul generat de formular este trimis chiar de tine, prin aplicația WhatsApp (sau
-            prin e-mail), direct către noi. În paralel, cererea ta — inclusiv documentele pe care
-            alegi să le atașezi — este salvată în evidența noastră internă de cereri, găzduită
-            securizat pe platforma Supabase, pe servere din Uniunea Europeană. La această evidență
-            au acces doar consultanții echipei asigurabil.ro, pe bază de cont individual.
+            Cererea ta — inclusiv documentele pe care alegi să le atașezi — este trimisă direct
+            din site în evidența noastră internă de cereri, găzduită securizat pe platforma
+            Supabase, pe servere din Uniunea Europeană. La această evidență au acces doar
+            consultanții echipei asigurabil.ro, pe bază de cont individual, iar consultantul te
+            contactează pe WhatsApp sau telefon la numărul lăsat de tine.
           </p>
           <p>
             Datele nu sunt transmise terților în scop de marketing. Pentru pregătirea ofertelor,

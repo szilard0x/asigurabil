@@ -15,7 +15,7 @@ const faqs = [
   },
   {
     q: 'Ce acte îmi trebuie pentru RCA?',
-    a: 'Doar talonul mașinii (certificatul de înmatriculare) și datele proprietarului din buletin. Ni le trimiți pe WhatsApp ca poză și ne ocupăm noi de restul.',
+    a: 'Doar talonul mașinii (certificatul de înmatriculare) și datele proprietarului din buletin. Le trimiți pe WhatsApp ca poză și ne ocupăm noi de restul.',
   },
   {
     q: 'Sunt obligat să cumpăr dacă cer o ofertă?',

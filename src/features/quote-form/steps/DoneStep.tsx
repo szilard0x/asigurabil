@@ -1,14 +1,12 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { useQuoteForm } from '../QuoteFormContext'
-import { buildWhatsAppLink } from '../buildMessage'
 import { BRAND } from '../../../lib/constants'
 import { useBroker } from '../../../lib/broker'
 
 export default function DoneStep() {
-  const { data, reset, files, sentShortId } = useQuoteForm()
+  const { reset, sentShortId } = useQuoteForm()
   const reduced = useReducedMotion()
   const contact = useBroker()
-  const meta = sentShortId ? { shortId: sentShortId, fileCount: files.length } : {}
 
   return (
     <div className="text-center py-4">
@@ -22,12 +20,16 @@ export default function DoneStep() {
         ✅
       </motion.div>
       <h3 className="font-display font-bold text-navy text-2xl mb-3">
-        Mesajul tău a ajuns la noi!
+        Cererea ta a fost trimisă!
       </h3>
+      {sentShortId && (
+        <p className="text-muted text-sm mb-3">
+          Numărul cererii: <b className="font-display text-navy">#{sentShortId}</b>
+        </p>
+      )}
       <p className="text-muted text-[15px] leading-relaxed max-w-md mx-auto">
-        Dacă ai trimis mesajul pe WhatsApp, conversația e deja deschisă — îți răspundem de obicei
-        în <b className="text-navy">{BRAND.responseTime}</b> în timpul programului (
-        {BRAND.schedule}).
+        Echipa noastră a fost anunțată și te contactează pe WhatsApp sau telefon — de obicei în{' '}
+        <b className="text-navy">{BRAND.responseTime}</b> în timpul programului ({BRAND.schedule}).
       </p>
       <div className="bg-amber-soft/60 border border-amber/30 rounded-2xl px-5 py-4 max-w-md mx-auto mt-6 text-[14px] text-ink">
         ⚡ <b>E urgent?</b> Sună direct la{' '}
@@ -35,16 +37,7 @@ export default function DoneStep() {
           {contact.phoneDisplay}
         </a>
       </div>
-      <div className="flex items-center justify-center gap-5 mt-7 text-[13px] text-muted">
-        <a
-          href={buildWhatsAppLink(data, meta, contact.phoneWhatsApp)}
-          target="_blank"
-          rel="noopener"
-          className="hover:text-navy underline underline-offset-2"
-        >
-          Redeschide mesajul WhatsApp
-        </a>
-        <span aria-hidden>·</span>
+      <div className="flex items-center justify-center mt-7 text-[13px] text-muted">
         <button onClick={reset} className="cursor-pointer hover:text-navy underline underline-offset-2">
           Cere încă o ofertă
         </button>

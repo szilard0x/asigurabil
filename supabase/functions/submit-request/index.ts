@@ -195,6 +195,8 @@ Deno.serve(async (req) => {
         'new_request',
         `🔔 Cerere nouă #${request.short_id}: ${name} — ${TYPE_LABELS[typeId]}` +
           (files.length ? ` (${files.length} documente atașate)` : '') +
+          `\n📞 Client: ${phone}` +
+          (payload.city ? ` · ${String(payload.city).slice(0, 100)}` : '') +
           `\nDeschide: ${adminUrl}/cereri/${request.id}`,
       )
     }

@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
   // indiferent dacă are raportul zilnic activat; cron-ul respectă setarea.
   let recipientsQuery = supabaseAdmin
     .from('notification_settings')
-    .select('profile_id, digest_hour, stale_days, last_digest_at, profiles!inner(phone, full_name, role, disabled)')
+    .select('profile_id, digest_hour, stale_hours, last_digest_at, profiles!inner(phone, full_name, role, disabled)')
   recipientsQuery =
     force && callerId
       ? recipientsQuery.eq('profile_id', callerId)
@@ -93,7 +93,7 @@ Deno.serve(async (req) => {
       if (lastDay === today) continue
     }
 
-    const staleBefore = new Date(Date.now() - r.stale_days * 24 * 3600 * 1000).toISOString()
+    const staleBefore = new Date(Date.now() - r.stale_hours * 3600 * 1000).toISOString()
     // cererile relevante pentru utilizator: ale lui + (admin: și cele neasignate)
     let query = supabaseAdmin
       .from('requests')
@@ -113,11 +113,18 @@ Deno.serve(async (req) => {
       continue
     }
 
+    // pragul e în ore, deci arătăm și ora ultimei modificări
     const lines = stale.map(
       (s) =>
         `• #${s.short_id} — ${s.name} (${STATUS_LABELS[s.status] ?? s.status}, din ${new Date(
           s.updated_at,
-        ).toLocaleDateString('ro-RO')})`,
+        ).toLocaleString('ro-RO', {
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Europe/Bucharest',
+        })})`,
     )
     const waBody =
       `📋 asigurabil.ro — ${stale.length} cereri care așteaptă:\n${lines.join('\n')}\n\n` +
